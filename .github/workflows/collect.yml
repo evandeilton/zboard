@@ -116,13 +116,13 @@ jobs:
         if: env.LEG_ENABLED == 'true' && matrix.source == 'github'
         shell: Rscript {0}
         env:
-          # Fine-grained PAT with `Administration: read`, required for the
-          # cross-repo traffic endpoints. Both variables are
-          # set to the same value because `gh::gh_token()` prefers GITHUB_PAT
-          # over GITHUB_TOKEN - leaving GITHUB_PAT unset elsewhere would be
-          # enough today, but setting both here is immune to that ordering.
-          GITHUB_TOKEN: ${{ secrets.GH_FINE_GRAINED_PAT }}
-          GITHUB_PAT: ${{ secrets.GH_FINE_GRAINED_PAT }}
+          # The fine-grained PAT (`Administration: read`) is what the traffic
+          # endpoints require. Without it, fall back to the workflow's own
+          # token: it reads public repositories (activity, snapshot,
+          # releases), and only gh_traffic is recorded as failed. Both
+          # variables are set because `gh::gh_token()` prefers GITHUB_PAT.
+          GITHUB_TOKEN: ${{ secrets.GH_FINE_GRAINED_PAT || github.token }}
+          GITHUB_PAT: ${{ secrets.GH_FINE_GRAINED_PAT || github.token }}
         run: |
           options(warn = 2)
           from <- Sys.getenv("BACKFILL_FROM")

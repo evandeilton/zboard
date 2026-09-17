@@ -76,7 +76,7 @@ b <- make_badges(
 )
 #> 
 #> ── make_badges() ───────────────────────────────────────────────────────────────
-#> ℹ 1 package -> /tmp/Rtmp6evWpe/file43bb4705de1a/badges.
+#> ℹ 1 package -> /tmp/RtmpF3k7G2/file4387b697bcc/badges.
 #> ✔ 3 badges written.
 b$slug
 #> [1] "gkwreg-downloads" "gkwreg-check"     "gkwreg-version"  

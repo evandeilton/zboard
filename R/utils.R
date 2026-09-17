@@ -617,7 +617,7 @@ zb_retry <- function(f, max_tries = 3L, base_delay = 1, label = "request",
 zb_req_perform <- function(req, max_tries = 3L, timeout = 60) {
   req <- httr2::req_user_agent(
     req,
-    "zboard (https://github.com/evandeilton/prod-monitor)"
+    "zboard (https://github.com/evandeilton/zboard)"
   )
   req <- httr2::req_timeout(req, timeout)
   req <- httr2::req_retry(

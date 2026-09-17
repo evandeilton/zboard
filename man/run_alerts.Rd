@@ -9,7 +9,7 @@ run_alerts(
   token = Sys.getenv("GITHUB_TOKEN"),
   data_dir = "data",
   label = "alert",
-  marker_prefix = "prod-monitor"
+  marker_prefix = "zboard"
 )
 }
 \arguments{
@@ -44,8 +44,8 @@ automatically; it waits for a human.
 }
 
 Deduplication is by a hidden HTML marker in the issue body, one per
-\verb{(kind, package)} -- \verb{<!-- prod-monitor:cran-check:\{pkg\} -->} or
-\verb{<!-- prod-monitor:archived:\{pkg\} -->}. Open issues are listed and
+\verb{(kind, package)} -- \verb{<!-- zboard:cran-check:\{pkg\} -->} or
+\verb{<!-- zboard:archived:\{pkg\} -->}. Open issues are listed and
 matched on that marker before anything is created, so a second issue is
 never opened for a condition that is already tracked.
 }
@@ -68,7 +68,7 @@ run_alerts(
 }
 
 # Without a token: prints the plan, touches no API.
-run_alerts(repo = "evandeilton/prod-monitor", token = "", data_dir = tempfile())
+run_alerts(repo = "evandeilton/zboard", token = "", data_dir = tempfile())
 }
 \seealso{
 \code{\link[=consolidate]{consolidate()}}

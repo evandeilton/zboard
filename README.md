@@ -1,8 +1,8 @@
 # zboard
 
 <!-- badges: start -->
-[![collect](https://github.com/evandeilton/prod-monitor/actions/workflows/collect.yml/badge.svg)](https://github.com/evandeilton/prod-monitor/actions/workflows/collect.yml)
-[![test](https://github.com/evandeilton/prod-monitor/actions/workflows/test.yml/badge.svg)](https://github.com/evandeilton/prod-monitor/actions/workflows/test.yml)
+[![collect](https://github.com/evandeilton/zboard/actions/workflows/collect.yml/badge.svg)](https://github.com/evandeilton/zboard/actions/workflows/collect.yml)
+[![test](https://github.com/evandeilton/zboard/actions/workflows/test.yml/badge.svg)](https://github.com/evandeilton/zboard/actions/workflows/test.yml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 <!-- badges: end -->
@@ -21,14 +21,9 @@ The dashboard serves two purposes at once: **operational** — catching CRAN
 regressions before the official notification arrives — and **showcase** — a
 public portfolio artifact, linkable from a CV, LinkedIn or a package README.
 
-- **Live dashboard:** <https://evandeilton.github.io/prod-monitor/> (EN) ·
-  <https://evandeilton.github.io/prod-monitor/pt/> (PT-BR)
+- **Live dashboard:** <https://evandeilton.github.io/zboard/> (EN) ·
+  <https://evandeilton.github.io/zboard/pt/> (PT-BR)
 - **Full, normative specification:** [`SPEC.md`](SPEC.md)
-
-> **Package name vs. repository name.** The R package is `zboard`; the GitHub
-> repository is `evandeilton/prod-monitor`. Use `prod-monitor` only in
-> repository and Pages URLs, and `zboard` in everything that is code —
-> `library(zboard)`, `zboard::collect_cran()`, installation instructions.
 
 Status: `0.0.0.9000`, pre-release. Not on CRAN and not intended for it — this is
 a self-hosted monitoring tool, not a general-purpose library.
@@ -162,9 +157,8 @@ under `options(warn = 2)` (RNF-8), so treat a warning as a failure locally too.
 | `OPENALEX_MAILTO` | `collect_academic()` | Contact e-mail for the OpenAlex polite pool. |
 
 Both are read from the environment; never commit them, and never write them into
-generated HTML (`SPEC.md` §11). For local work, put them in a `.Renviron` that is
-outside the repository, or in the project's `.Renviron` — which is **not** in
-`.gitignore` today, so prefer `~/.Renviron` unless you add it first.
+generated HTML (`SPEC.md` §11). For local work, put them in a `.Renviron` at
+the repository root (already covered by `.gitignore`) or in `~/.Renviron`.
 
 ---
 
@@ -229,7 +223,7 @@ The `build` job writes shields.io *endpoint* JSON to `badges/` on the published
 site. Drop this into the README of any package (`SPEC.md` §7.4):
 
 ```markdown
-![CRAN downloads](https://img.shields.io/endpoint?url=https://evandeilton.github.io/prod-monitor/badges/gkwreg-downloads.json)
+![CRAN downloads](https://img.shields.io/endpoint?url=https://evandeilton.github.io/zboard/badges/gkwreg-downloads.json)
 ```
 
 Available in v1, for each curated package: `<pkg>-downloads`, `<pkg>-check`

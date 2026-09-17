@@ -24,10 +24,10 @@
 #' @param package Package name.
 #' @param prefix Marker namespace; the repository slug of SPEC.md S8.
 #' @return A length-1 character vector, e.g.
-#'   `"<!-- prod-monitor:cran-check:gkwreg -->"`.
+#'   `"<!-- zboard:cran-check:gkwreg -->"`.
 #' @keywords internal
 #' @noRd
-zb_alert_marker <- function(kind, package, prefix = "prod-monitor") {
+zb_alert_marker <- function(kind, package, prefix = "zboard") {
   paste0("<!-- ", prefix, ":", kind, ":", package, " -->")
 }
 
@@ -44,7 +44,7 @@ zb_alert_marker <- function(kind, package, prefix = "prod-monitor") {
 #'   nothing should be open.
 #' @keywords internal
 #' @noRd
-zb_alert_plan <- function(status, checks, prefix = "prod-monitor") {
+zb_alert_plan <- function(status, checks, prefix = "zboard") {
   empty <- tibble::tibble(
     kind = character(), package = character(), marker = character(),
     severity = character(), status = character(), n_flavors = integer(),
@@ -155,7 +155,7 @@ zb_alert_plan <- function(status, checks, prefix = "prod-monitor") {
 #' @keywords internal
 #' @noRd
 zb_open_alert_issues <- function(repo, token, label = "alert",
-                                 prefix = "prod-monitor") {
+                                 prefix = "zboard") {
   rn <- zb_split_repo(repo)
   issues <- zb_retry(
     function() {
@@ -228,8 +228,8 @@ zb_ensure_label <- function(repo, token, label = "alert") {
 #'   automatically; it waits for a human.
 #'
 #' Deduplication is by a hidden HTML marker in the issue body, one per
-#' `(kind, package)` -- `<!-- prod-monitor:cran-check:{pkg} -->` or
-#' `<!-- prod-monitor:archived:{pkg} -->`. Open issues are listed and
+#' `(kind, package)` -- `<!-- zboard:cran-check:{pkg} -->` or
+#' `<!-- zboard:archived:{pkg} -->`. Open issues are listed and
 #' matched on that marker before anything is created, so a second issue is
 #' never opened for a condition that is already tracked.
 #'
@@ -266,12 +266,12 @@ zb_ensure_label <- function(repo, token, label = "alert") {
 #' }
 #'
 #' # Without a token: prints the plan, touches no API.
-#' run_alerts(repo = "evandeilton/prod-monitor", token = "", data_dir = tempfile())
+#' run_alerts(repo = "evandeilton/zboard", token = "", data_dir = tempfile())
 run_alerts <- function(repo = Sys.getenv("GITHUB_REPOSITORY"),
                        token = Sys.getenv("GITHUB_TOKEN"),
                        data_dir = "data",
                        label = "alert",
-                       marker_prefix = "prod-monitor") {
+                       marker_prefix = "zboard") {
   repo <- as.character(repo)[1L]
   token <- as.character(token)[1L]
   if (is.na(token)) token <- ""

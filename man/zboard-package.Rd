@@ -15,9 +15,9 @@ normative specification.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/evandeilton/prod-monitor}
-  \item \url{https://evandeilton.github.io/prod-monitor/}
-  \item Report bugs at \url{https://github.com/evandeilton/prod-monitor/issues}
+  \item \url{https://github.com/evandeilton/zboard}
+  \item \url{https://evandeilton.github.io/zboard/}
+  \item Report bugs at \url{https://github.com/evandeilton/zboard/issues}
 }
 
 }

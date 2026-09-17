@@ -20,7 +20,7 @@ project:
   output-dir: ../_site/pt
 
 website:
-  title: "prod-monitor"
+  title: "zboard"
   description: "Painel estático, atualizado diariamente, com a saúde dos pacotes no CRAN, a atividade de desenvolvimento no GitHub e a produção acadêmica de um conjunto curado de pacotes R e repositórios."
   navbar:
     background: light
@@ -38,9 +38,9 @@ website:
         text: "Sobre"
     right:
       - icon: github
-        href: https://github.com/evandeilton/prod-monitor
+        href: https://github.com/evandeilton/zboard
         aria-label: "Código-fonte"
   page-footer:
     border: true
     left: "Código sob licença MIT · dados agregados sob CC-BY-4.0"
-    right: "[Código-fonte](https://github.com/evandeilton/prod-monitor)"
+    right: "[Código-fonte](https://github.com/evandeilton/zboard)"

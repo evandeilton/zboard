@@ -26,6 +26,10 @@ renv/python/
 .Ruserdata
 *.Rproj
 
+# Local secrets (GITHUB_TOKEN, OPENALEX_MAILTO) for interactive dev.
+# Never committed -- see README.md "Environment variables".
+.Renviron
+
 # R package build/check artifacts
 /*.Rcheck/
 /zboard_*.tar.gz

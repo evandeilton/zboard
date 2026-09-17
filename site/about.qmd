@@ -111,8 +111,8 @@ for (id in limit_ids) {
 
 `r tr("about.source.body")`
 
-- [`r tr("about.source.link_label")`](https://github.com/evandeilton/prod-monitor)
-- [`r tr("about.source.issues_label")`](https://github.com/evandeilton/prod-monitor/issues)
+- [`r tr("about.source.link_label")`](https://github.com/evandeilton/zboard)
+- [`r tr("about.source.issues_label")`](https://github.com/evandeilton/zboard/issues)
 
 `r tr("about.source.issues_body")`
 

@@ -17,7 +17,7 @@
 lang: en
 
 website:
-  title: "prod-monitor"
+  title: "zboard"
   description: "Static, daily-updated dashboard of CRAN package health, GitHub development activity and academic output for a curated set of R packages and repositories."
   navbar:
     background: light
@@ -35,9 +35,9 @@ website:
         text: "About"
     right:
       - icon: github
-        href: https://github.com/evandeilton/prod-monitor
+        href: https://github.com/evandeilton/zboard
         aria-label: "Source code"
   page-footer:
     border: true
     left: "Code under the MIT licence · aggregated data under CC-BY-4.0"
-    right: "[Source code](https://github.com/evandeilton/prod-monitor)"
+    right: "[Source code](https://github.com/evandeilton/zboard)"

@@ -26,8 +26,8 @@
 
 # -- site chrome --------------------------------------------------------------
 site.title:
-  en: "prod-monitor"
-  pt: "prod-monitor"
+  en: "zboard"
+  pt: "zboard"
 site.subtitle:
   en: "CRAN health, GitHub activity and academic output"
   pt: "Saúde no CRAN, atividade no GitHub e produção acadêmica"
@@ -898,8 +898,8 @@ about.source.body:
   en: "The collectors, the consolidation pipeline and this site are a single open-source repository. The full, normative specification lives in `SPEC.md` at its root."
   pt: "Os coletores, o pipeline de consolidação e este site são um único repositório open source. A especificação completa e normativa vive em `SPEC.md` na sua raiz."
 about.source.link_label:
-  en: "evandeilton/prod-monitor on GitHub"
-  pt: "evandeilton/prod-monitor no GitHub"
+  en: "evandeilton/zboard on GitHub"
+  pt: "evandeilton/zboard no GitHub"
 about.source.issues_label:
   en: "Report a problem with this dashboard"
   pt: "Relatar um problema neste painel"

@@ -112,7 +112,7 @@ res <- consolidate(
 )
 #> 
 #> ── consolidate() ───────────────────────────────────────────────────────────────
-#> ℹ staging /tmp/RtmpF3k7G2/file438777e952fd/staging -> data /tmp/RtmpF3k7G2/file438777e952fd/data; keeping daily rows from 2025-09-17.
+#> ℹ staging /tmp/RtmpTuom5d/file449b70e728d5/staging -> data /tmp/RtmpTuom5d/file449b70e728d5/data; keeping daily rows from 2025-09-17.
 #> ✔ run_manifest: +1 row, 1 kept.
 nrow(res)
 #> [1] 9

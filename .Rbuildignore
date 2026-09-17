@@ -1,0 +1,17 @@
+^SPEC\.md$
+^config$
+^site$
+^staging$
+^data$
+^_site$
+^badges$
+^\.github$
+^\.git$
+^\.gitignore$
+^renv$
+^renv\.lock$
+^\.Rproj\.user$
+^.*\.Rproj$
+^README\.Rmd$
+^cran-comments\.md$
+^LICENSE\.md$

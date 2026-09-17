@@ -1,0 +1,282 @@
+---
+title: "`r {source('_setup.R'); tr('cran.title')}`"
+---
+
+```{r}
+#| label: setup
+#| include: false
+## CRAN (SPEC.md S7.1): status by package and flavour, the daily download
+## series with vertical release markers, and the permanent version history.
+##
+## SPEC.md S7.2 is enforced here twice over: every download figure carries
+## the mandatory "partial sample" label and a one-click link to the S10.1
+## limitation, and every figure is dated by its own most recent datum
+## (cran_downloads.json -> latest_data_date), never by the build time.
+source("_setup.R")
+
+status_json <- zb_json("cran_status")
+downloads_json <- zb_json("cran_downloads")
+
+status <- zb_df(status_json$status)
+checks <- zb_df(status_json$checks)
+versions <- zb_df(status_json$versions)
+flavors <- status_json$flavors
+
+daily <- zb_points(downloads_json$series, "package")
+releases <- zb_df(downloads_json$releases)
+monthly <- zb_df(downloads_json$monthly)
+series <- zb_df(downloads_json$series)
+downloads_date <- zb_get(downloads_json, "latest_data_date")
+```
+
+```{r}
+#| label: header
+#| results: asis
+zb_out(zb_page_header("cran.html", downloads_date))
+```
+
+`r tr("cran.lead")`
+
+## `r tr("cran.status.title")`
+
+```{r}
+#| label: status
+#| results: asis
+if (nrow(status) == 0L) {
+  zb_out(zb_no_data(tr("cran.status.none")))
+} else {
+  status <- status[order(status$package), , drop = FALSE]
+  table <- data.frame(
+    package = status$package,
+    worst = zb_status(status$worst_status),
+    n_flavors = zb_int(status$n_flavors),
+    n_not_ok = zb_int(status$n_flavors_not_ok),
+    on_cran = zb_bool(status$on_cran),
+    archived = zb_bool(status$archived),
+    maintainer = status$maintainer,
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(
+      tr("common.package"), tr("cran.col.worst_status"),
+      tr("cran.col.n_flavors"), tr("cran.col.n_flavors_not_ok"),
+      tr("cran.col.on_cran"), tr("cran.col.archived"),
+      tr("cran.col.maintainer")
+    ),
+    caption = tr_f("common.snapshot_date",
+      date = zb_date(zb_get(status_json, "snapshot_date"))
+    ),
+    align = c("l", "l", "r", "r", "l", "l", "l"),
+    raw = "worst",
+    row_header = TRUE
+  ))
+}
+```
+
+## `r tr("cran.checks.title")`
+
+`r tr("cran.checks.lead")`
+
+```{r}
+#| label: checks-matrix
+#| results: asis
+if (nrow(checks) == 0L || !length(flavors)) {
+  zb_out(zb_no_data(tr("cran.checks.none")))
+} else {
+  packages <- sort(unique(checks$package))
+  # Flavours are the rows and packages the columns: CRAN runs a dozen or more
+  # flavours against a handful of packages, so this orientation fits the page
+  # instead of forcing a thirteen-column scroll. Flavour names are CRAN
+  # identifiers, hence data, and are printed verbatim.
+  matrix_df <- data.frame(flavor = flavors, stringsAsFactors = FALSE)
+  for (pkg in packages) {
+    matrix_df[[pkg]] <- vapply(flavors, function(flavor) {
+      hit <- checks$status[checks$package == pkg & checks$flavor == flavor]
+      zb_status(if (length(hit)) hit[[1L]] else NA_character_)
+    }, character(1), USE.NAMES = FALSE)
+  }
+  zb_out(zb_table(
+    matrix_df,
+    labels = c(tr("cran.col.flavor"), packages),
+    caption = tr_f("common.snapshot_date",
+      date = zb_date(zb_get(status_json, "snapshot_date"))
+    ),
+    align = c("l", rep("c", length(packages))),
+    raw = packages,
+    row_header = TRUE
+  ))
+
+  times <- checks[!is.na(checks$check_time), , drop = FALSE]
+  if (nrow(times) > 0L) {
+    summary_df <- do.call(rbind, lapply(split(times, times$package), function(g) {
+      data.frame(
+        package = g$package[[1L]],
+        version = g$version[[1L]],
+        check_time = zb_dbl(stats::median(g$check_time), digits = 1L),
+        stringsAsFactors = FALSE
+      )
+    }))
+    zb_out(zb_table(
+      summary_df,
+      labels = c(tr("common.package"), tr("common.version"), tr("cran.col.check_time")),
+      caption = tr("cran.col.check_time"),
+      align = c("l", "l", "r"),
+      row_header = TRUE
+    ))
+  }
+}
+```
+
+## `r tr("cran.downloads.title")`
+
+```{r}
+#| label: downloads-note
+#| results: asis
+zb_out(zb_downloads_note("lim-1"))
+```
+
+```{r}
+#| label: downloads-daily
+#| results: asis
+if (nrow(daily) == 0L) {
+  zb_out(zb_no_data(tr("cran.downloads.none")))
+} else {
+  markers <- releases[!is.na(releases$date), , drop = FALSE]
+  markers$date <- as.Date(markers$date)
+  markers <- markers[
+    markers$date >= min(daily$date) & markers$date <= max(daily$date), ,
+    drop = FALSE
+  ]
+
+  plot <- ggplot(daily, aes(x = date, y = downloads))
+
+  # Release markers exist to make the rebuild artefact visible, never to
+  # correct it (SPEC.md S10.3).
+  if (nrow(markers) > 0L) {
+    plot <- plot + geom_vline(
+      data = markers, aes(xintercept = date),
+      linetype = "dashed", linewidth = 0.45, colour = "#8a1420"
+    )
+  }
+
+  plot <- plot +
+    geom_line(linewidth = 0.55, colour = zb_palette[[1L]]) +
+    facet_wrap(~package, ncol = 1, scales = "free_y") +
+    zb_scale_x_day() +
+    scale_y_continuous(limits = c(0, NA)) +
+    labs(x = tr("cran.downloads.axis_x"), y = tr("cran.downloads.axis_y")) +
+    zb_theme()
+
+  zb_out(zb_fig(
+    plot,
+    alt = tr_f("cran.downloads.alt", date = zb_date(downloads_date)),
+    caption = paste0(
+      zb_chart_dateline(downloads_date), " ",
+      tr_f("downloads.window",
+        start = zb_date(zb_get(downloads_json, "window_start")),
+        end = zb_date(zb_get(downloads_json, "window_end"))
+      )
+    ),
+    height = zb_facet_height(length(unique(daily$package)), per = 1.7, base = 1.2)
+  ))
+  zb_out(zb_note(tr("cran.downloads.markers")))
+}
+```
+
+```{r}
+#| label: downloads-summary
+#| results: asis
+if (nrow(series) > 0L) {
+  series <- series[order(series$package), , drop = FALSE]
+  table <- data.frame(
+    package = series$package,
+    total = zb_int(series$total),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(tr("common.package"), tr("cran.col.downloads")),
+    caption = paste0(
+      tr("cran.downloads.summary_title"), " — ", tr("downloads.label")
+    ),
+    align = c("l", "r"),
+    row_header = TRUE
+  ))
+}
+```
+
+## `r tr("cran.monthly.title")`
+
+`r tr("cran.monthly.lead")`
+
+```{r}
+#| label: downloads-monthly
+#| results: asis
+if (nrow(monthly) == 0L) {
+  zb_out(zb_no_data(tr("cran.monthly.none")))
+} else {
+  zb_out(zb_downloads_note("lim-1"))
+  monthly$month_date <- as.Date(paste0(monthly$month, "-01"))
+  latest_month <- max(monthly$month)
+
+  plot <- ggplot(monthly, aes(x = month_date, y = downloads, fill = package)) +
+    geom_col(position = position_dodge2(preserve = "single"), width = 22) +
+    scale_fill_manual(values = zb_palette) +
+    scale_x_date(labels = function(d) zb_month(format(d, "%Y-%m"))) +
+    scale_y_continuous(limits = c(0, NA)) +
+    labs(x = tr("common.month"), y = tr("cran.monthly.axis_y")) +
+    zb_theme()
+
+  zb_out(zb_fig(
+    plot,
+    alt = tr_f("cran.monthly.alt", date = zb_month(latest_month)),
+    caption = zb_chart_dateline(paste0(latest_month, "-01")),
+    height = 3.6
+  ))
+
+  wide <- monthly[order(monthly$month, monthly$package), c("month", "package", "downloads")]
+  table <- data.frame(
+    month = zb_month(wide$month),
+    package = wide$package,
+    downloads = zb_int(wide$downloads),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(tr("common.month"), tr("common.package"), tr("cran.col.downloads")),
+    caption = paste0(tr("cran.monthly.title"), " — ", tr("downloads.label")),
+    align = c("l", "l", "r")
+  ))
+}
+```
+
+## `r tr("cran.versions.title")`
+
+`r tr("cran.versions.lead")`
+
+```{r}
+#| label: versions
+#| results: asis
+if (nrow(versions) == 0L) {
+  zb_out(zb_no_data(tr("cran.versions.none")))
+} else {
+  table <- data.frame(
+    package = versions$package,
+    version = versions$version,
+    release_date = zb_date(versions$release_date),
+    is_current = zb_bool(versions$is_current),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(
+      tr("common.package"), tr("common.version"),
+      tr("cran.col.release_date"), tr("cran.col.is_current")
+    ),
+    label = tr("cran.versions.title"),
+    align = c("l", "l", "l", "l"),
+    row_header = TRUE
+  ))
+}
+```

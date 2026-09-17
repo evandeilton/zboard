@@ -1,0 +1,138 @@
+---
+title: "`r {source('_setup.R'); tr('overview.title')}`"
+---
+
+```{r}
+#| label: setup
+#| include: false
+## Overview (SPEC.md S7.1): status cards per package, the recent download
+## sample, open issues, the last release and the per-source freshness light.
+##
+## NG-2 is load-bearing on this page: there is no commit count anywhere on
+## it, and `overview.no_commits_note` says so out loud, so the omission reads
+## as a decision rather than an oversight.
+##
+## Every visible string comes from config/i18n.yml through tr()/tr_f();
+## everything else on the page is a value read from site/_data/*.json.
+##
+## Kept inside this chunk rather than in an HTML comment: Pandoc passes an
+## HTML comment straight through to the output, which would publish English
+## developer notes inside the Portuguese page.
+source("_setup.R")
+
+meta <- zb_json("meta")
+overview <- zb_json("overview")
+freshness <- zb_json("freshness")
+
+packages <- zb_df(overview$packages)
+totals <- overview$totals
+sources <- zb_df(freshness$sources)
+```
+
+```{r}
+#| label: header
+#| results: asis
+zb_out(zb_page_header("index.html", zb_get(meta, "latest_data_date")))
+```
+
+`r tr("overview.lead")`
+
+## `r tr("overview.totals.title")`
+
+```{r}
+#| label: totals
+#| results: asis
+zb_out(zb_kpis(list(
+  list(
+    label = tr("overview.totals.packages"),
+    value = zb_int(zb_get(totals, "n_packages", 0L))
+  ),
+  list(
+    label = tr("overview.totals.repos"),
+    value = zb_int(zb_get(totals, "n_repos", 0L))
+  ),
+  list(
+    label = tr("overview.totals.downloads"),
+    value = zb_int(zb_get(totals, "downloads_30d", 0L)),
+    # SPEC.md S7.2: the mandatory label, and a one-click path to S10.1.
+    note = paste0(
+      "**", tr("downloads.label"), "**. [",
+      tr("downloads.limitation_link"), "](about.html#lim-1)."
+    )
+  ),
+  list(
+    label = tr("overview.totals.open_issues"),
+    value = zb_int(zb_get(totals, "open_issues", 0L))
+  ),
+  list(
+    label = tr("overview.totals.open_prs"),
+    value = zb_int(zb_get(totals, "open_prs", 0L))
+  ),
+  list(
+    label = tr("overview.totals.works"),
+    value = zb_int(zb_get(totals, "n_works", 0L))
+  ),
+  list(
+    label = tr("overview.totals.citations"),
+    value = zb_int(zb_get(totals, "citations", 0L)),
+    note = paste0("[", tr("common.see_limitations"), "](about.html#lim-5).")
+  )
+)))
+
+zb_out(zb_note(tr("overview.no_commits_note")))
+```
+
+## `r tr("overview.packages.title")`
+
+```{r}
+#| label: package-cards
+#| results: asis
+if (nrow(packages) == 0L) {
+  zb_out(zb_no_data(tr("overview.packages.none")))
+} else {
+  snapshot <- zb_get(overview, "snapshot_date")
+  if (!is.na(snapshot)) {
+    zb_out(zb_note(tr_f("common.snapshot_date", date = zb_date(snapshot))))
+  }
+  cards <- vapply(
+    seq_len(nrow(packages)),
+    function(i) zb_pkg_card(as.list(packages[i, , drop = FALSE])),
+    character(1)
+  )
+  zb_out('<div class="zb-card-grid">', paste0(cards, collapse = ""), "</div>")
+}
+```
+
+## `r tr("freshness.title")`
+
+`r tr("freshness.lead")`
+
+```{r}
+#| label: freshness
+#| results: asis
+if (nrow(sources) == 0L) {
+  zb_out(zb_no_data(tr("freshness.none")))
+} else {
+  sources <- sources[order(sources$source), , drop = FALSE]
+  table <- data.frame(
+    source = paste0("<code>", zb_esc(sources$source), "</code>"),
+    status = zb_run_status(sources$status),
+    run = zb_datetime(sources$run_ts),
+    age = tr_f("freshness.age_hours", hours = zb_dbl(sources$age_hours, digits = 1L)),
+    rows = zb_int(sources$rows_written),
+    message = ifelse(is.na(sources$message), tr("common.none"), sources$message),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(
+      tr("freshness.col.source"), tr("freshness.col.status"),
+      tr("freshness.col.run"), tr("freshness.col.age"),
+      tr("freshness.col.rows"), tr("freshness.col.message")
+    ),
+    label = tr("freshness.title"),
+    align = c("l", "l", "l", "r", "r", "l"),
+    raw = c("source", "status")
+  ))
+}
+```

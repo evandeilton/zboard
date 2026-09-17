@@ -1,0 +1,945 @@
+# =============================================================================
+# i18n.yml -- every literal string the dashboard prints (SPEC.md S7.3)
+# =============================================================================
+#
+# Contract
+# --------
+# * One top-level key per string, each with exactly the two languages `en`
+#   and `pt`. A key present in one language and missing in the other is a
+#   build failure: tests/testthat/test-i18n-parity.R enforces parity.
+# * No `.qmd` file may contain a literal user-visible string. Everything that
+#   is not a value read from `site/_data/*.json` comes from this file, via
+#   `tr()` / `tr_f()` in `site/_i18n.R`.
+# * `{placeholder}` markers are filled by `tr_f(key, placeholder = value)`.
+#   A string passed through `tr()` is emitted verbatim, braces included --
+#   that is how the technical endpoint strings below keep their `{pkg}`.
+# * Values are rendered as Markdown, so backticks, `**bold**` and `[a](b)`
+#   work. HTML is only used where a value is interpolated into a tag.
+#
+# Normative content
+# -----------------
+# `about.limit.N.*` reproduces SPEC.md S10 in full. That text is normative:
+# it must be published complete, in both languages. Do not summarise it.
+# `downloads.label` is the mandatory download label of SPEC.md S7.2; it must
+# never be replaced by anything resembling "total downloads".
+# =============================================================================
+
+# -- site chrome --------------------------------------------------------------
+site.title:
+  en: "prod-monitor"
+  pt: "prod-monitor"
+site.subtitle:
+  en: "CRAN health, GitHub activity and academic output"
+  pt: "Saúde no CRAN, atividade no GitHub e produção acadêmica"
+site.description:
+  en: "Static, daily-updated dashboard of CRAN package health, GitHub development activity and academic output for a curated set of R packages and repositories."
+  pt: "Painel estático, atualizado diariamente, com a saúde dos pacotes no CRAN, a atividade de desenvolvimento no GitHub e a produção acadêmica de um conjunto curado de pacotes R e repositórios."
+
+nav.overview:
+  en: "Overview"
+  pt: "Visão geral"
+nav.cran:
+  en: "CRAN"
+  pt: "CRAN"
+nav.github:
+  en: "GitHub"
+  pt: "GitHub"
+nav.academic:
+  en: "Academic"
+  pt: "Acadêmico"
+nav.about:
+  en: "About"
+  pt: "Sobre"
+nav.source:
+  en: "Source code"
+  pt: "Código-fonte"
+
+footer.license:
+  en: "Code under the MIT licence · aggregated data under CC-BY-4.0"
+  pt: "Código sob licença MIT · dados agregados sob CC-BY-4.0"
+
+# -- language switch (SPEC.md S7.3: static link, preserving the page path) -----
+lang.name.en:
+  en: "English"
+  pt: "English"
+lang.name.pt:
+  en: "Português"
+  pt: "Português"
+lang.reading:
+  en: "Reading in"
+  pt: "Lendo em"
+lang.switch_to:
+  en: "Read this page in {language}"
+  pt: "Ler esta página em {language}"
+lang.bar_aria:
+  en: "Language selector"
+  pt: "Seletor de idioma"
+
+# -- locale-dependent formatting (no reliance on the system locale) -----------
+format.thousands_sep:
+  en: ","
+  pt: "."
+format.decimal_sep:
+  en: "."
+  pt: ","
+format.date_pattern:
+  en: "{mon} {day}, {year}"
+  pt: "{day} {mon} {year}"
+format.datetime_pattern:
+  en: "{mon} {day}, {year}, {time} UTC"
+  pt: "{day} {mon} {year}, {time} UTC"
+format.month_short:
+  en: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec"
+  pt: "jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez"
+format.date_short_pattern:
+  en: "{mon} {day}"
+  pt: "{day} {mon}"
+format.month_year_pattern:
+  en: "{mon} {year}"
+  pt: "{mon} {year}"
+format.percent:
+  en: "{value}%"
+  pt: "{value}%"
+format.yes:
+  en: "yes"
+  pt: "sim"
+format.no:
+  en: "no"
+  pt: "não"
+
+# -- values shared by more than one page --------------------------------------
+common.package:
+  en: "Package"
+  pt: "Pacote"
+common.repository:
+  en: "Repository"
+  pt: "Repositório"
+common.version:
+  en: "Version"
+  pt: "Versão"
+common.status:
+  en: "Status"
+  pt: "Status"
+common.month:
+  en: "Month"
+  pt: "Mês"
+common.date:
+  en: "Date"
+  pt: "Data"
+common.unknown:
+  en: "unknown"
+  pt: "desconhecido"
+common.none:
+  en: "none"
+  pt: "nenhum"
+common.no_data:
+  en: "No data has been collected for this section yet. The dashboard renders before the first collection runs, so an empty section means *not yet collected*, not *zero*."
+  pt: "Ainda não há dados coletados para esta seção. O painel é renderizado antes da primeira coleta, então uma seção vazia significa *ainda não coletado*, não *zero*."
+common.latest_datum:
+  en: "Most recent datum: **{date}**"
+  pt: "Dado mais recente: **{date}**"
+common.latest_datum_unknown:
+  en: "Most recent datum: **not available yet**"
+  pt: "Dado mais recente: **ainda indisponível**"
+common.build_time:
+  en: "Page built on {datetime}. Every figure below is dated by its data, never by this build."
+  pt: "Página construída em {datetime}. Todo gráfico abaixo é datado pelo seu dado, nunca por este build."
+common.snapshot_date:
+  en: "Snapshot of {date}"
+  pt: "Snapshot de {date}"
+common.see_limitations:
+  en: "See the declared limitations"
+  pt: "Ver as limitações declaradas"
+common.chart_dated:
+  en: "Chart data up to {date}."
+  pt: "Dados do gráfico até {date}."
+common.chart_undated:
+  en: "Chart has no dated data yet."
+  pt: "O gráfico ainda não tem dado datado."
+common.aria_status_prefix:
+  en: "check status"
+  pt: "status de check"
+
+# -- CRAN check status: never colour alone (SPEC.md S7.2, RNF-10) -------------
+status.label.ok:
+  en: "OK"
+  pt: "OK"
+status.label.note:
+  en: "NOTE"
+  pt: "NOTE"
+status.label.warn:
+  en: "WARN"
+  pt: "WARN"
+status.label.error:
+  en: "ERROR"
+  pt: "ERROR"
+status.label.fail:
+  en: "FAIL"
+  pt: "FAIL"
+status.label.unknown:
+  en: "UNKNOWN"
+  pt: "DESCONHECIDO"
+status.desc.ok:
+  en: "check passed on every flavour"
+  pt: "check passou em todos os flavors"
+status.desc.note:
+  en: "check raised a note"
+  pt: "check emitiu uma note"
+status.desc.warn:
+  en: "check raised a warning"
+  pt: "check emitiu um warning"
+status.desc.error:
+  en: "check failed with an error"
+  pt: "check falhou com erro"
+status.desc.fail:
+  en: "check could not be completed"
+  pt: "check não pôde ser concluído"
+status.desc.unknown:
+  en: "no check result available"
+  pt: "sem resultado de check disponível"
+
+# -- freshness / run_manifest (SPEC.md S7.1) ----------------------------------
+freshness.title:
+  en: "Source freshness"
+  pt: "Frescor das fontes"
+freshness.lead:
+  en: "Last recorded run of each collector. A stale or failed source degrades that section of the dashboard without blocking the rest (RNF-3)."
+  pt: "Última execução registrada de cada coletor. Uma fonte defasada ou com falha degrada apenas a sua seção do painel, sem bloquear as demais (RNF-3)."
+freshness.col.source:
+  en: "Source"
+  pt: "Fonte"
+freshness.col.status:
+  en: "Status"
+  pt: "Status"
+freshness.col.run:
+  en: "Last run"
+  pt: "Última execução"
+freshness.col.age:
+  en: "Age"
+  pt: "Idade"
+freshness.col.rows:
+  en: "Rows written"
+  pt: "Linhas gravadas"
+freshness.col.message:
+  en: "Message"
+  pt: "Mensagem"
+freshness.status.ok:
+  en: "OK"
+  pt: "OK"
+freshness.status.partial:
+  en: "PARTIAL"
+  pt: "PARCIAL"
+freshness.status.failed:
+  en: "FAILED"
+  pt: "FALHOU"
+freshness.status.unknown:
+  en: "UNKNOWN"
+  pt: "DESCONHECIDO"
+freshness.age_hours:
+  en: "{hours} h"
+  pt: "{hours} h"
+freshness.none:
+  en: "No pipeline run has been recorded yet."
+  pt: "Nenhuma execução do pipeline foi registrada ainda."
+
+# -- downloads: the mandatory wording of SPEC.md S7.2 -------------------------
+downloads.label:
+  en: "downloads from the Posit mirror (partial sample)"
+  pt: "downloads do mirror da Posit (amostra parcial)"
+downloads.limitation_link:
+  en: "Why this is a partial sample and not a download total"
+  pt: "Por que isto é uma amostra parcial e não um total de downloads"
+downloads.window:
+  en: "Exported window: {start} to {end}."
+  pt: "Janela exportada: {start} a {end}."
+downloads.last_30d:
+  en: "Last 30 days"
+  pt: "Últimos 30 dias"
+downloads.prev_30d:
+  en: "Previous 30 days"
+  pt: "30 dias anteriores"
+downloads.trend:
+  en: "Change vs. the previous 30 days"
+  pt: "Variação vs. os 30 dias anteriores"
+downloads.trend_unavailable:
+  en: "no baseline"
+  pt: "sem linha de base"
+
+# -- Overview page ------------------------------------------------------------
+overview.title:
+  en: "Overview"
+  pt: "Visão geral"
+overview.lead:
+  en: "State of every curated CRAN package and GitHub repository: worst check status, recent download sample, open issues and the last release."
+  pt: "Estado de cada pacote CRAN e repositório GitHub curado: pior status de check, amostra recente de downloads, issues abertas e a última release."
+overview.totals.title:
+  en: "At a glance"
+  pt: "Panorama"
+overview.totals.packages:
+  en: "CRAN packages monitored"
+  pt: "Pacotes CRAN monitorados"
+overview.totals.repos:
+  en: "GitHub repositories monitored"
+  pt: "Repositórios GitHub monitorados"
+overview.totals.downloads:
+  en: "Downloads, last 30 days"
+  pt: "Downloads, últimos 30 dias"
+overview.totals.open_issues:
+  en: "Open issues"
+  pt: "Issues abertas"
+overview.totals.open_prs:
+  en: "Open pull requests"
+  pt: "Pull requests abertos"
+overview.totals.works:
+  en: "Academic works"
+  pt: "Trabalhos acadêmicos"
+overview.totals.citations:
+  en: "Citations indexed by OpenAlex"
+  pt: "Citações indexadas pelo OpenAlex"
+overview.packages.title:
+  en: "Package status"
+  pt: "Estado dos pacotes"
+overview.packages.none:
+  en: "No package has been collected yet."
+  pt: "Nenhum pacote foi coletado ainda."
+overview.card.flavors:
+  en: "{not_ok} of {n} flavours outside OK"
+  pt: "{not_ok} de {n} flavors fora de OK"
+overview.card.flavors_none:
+  en: "no flavour result in this snapshot"
+  pt: "nenhum resultado de flavor neste snapshot"
+overview.card.version:
+  en: "CRAN version"
+  pt: "Versão no CRAN"
+overview.card.released_on:
+  en: "published {date}"
+  pt: "publicada em {date}"
+overview.card.issues:
+  en: "Open issues"
+  pt: "Issues abertas"
+overview.card.prs:
+  en: "Open PRs"
+  pt: "PRs abertos"
+overview.card.stars:
+  en: "Stars"
+  pt: "Estrelas"
+overview.card.last_release:
+  en: "Last release"
+  pt: "Última release"
+overview.card.no_repo:
+  en: "no curated repository"
+  pt: "sem repositório curado"
+overview.card.no_release:
+  en: "no release recorded"
+  pt: "nenhuma release registrada"
+overview.card.archived:
+  en: "ARCHIVED on CRAN"
+  pt: "ARQUIVADO no CRAN"
+overview.card.off_index:
+  en: "OUTSIDE the active CRAN index"
+  pt: "FORA do índice ativo do CRAN"
+overview.no_commits_note:
+  en: "Commit counts appear nowhere on this page, by design. Raw commit volume measures typing, not production, and a headline built on it invites Goodhart's law (SPEC.md NG-2). Commits are published only as a secondary series on the GitHub page."
+  pt: "Contagens de commits não aparecem em nenhum ponto desta página, por decisão de projeto. Volume bruto de commits mede digitação, não produção, e um destaque construído sobre ele convida à lei de Goodhart (SPEC.md NG-2). Commits são publicados apenas como série secundária na página GitHub."
+
+# -- CRAN page ----------------------------------------------------------------
+cran.title:
+  en: "CRAN"
+  pt: "CRAN"
+cran.lead:
+  en: "Check status by package and flavour, the daily download sample with release markers, and the complete version history."
+  pt: "Status de check por pacote e flavor, a amostra diária de downloads com marcadores de release e o histórico completo de versões."
+cran.status.title:
+  en: "Package status"
+  pt: "Estado dos pacotes"
+cran.status.none:
+  en: "No CRAN status snapshot has been collected yet."
+  pt: "Nenhum snapshot de status do CRAN foi coletado ainda."
+cran.checks.title:
+  en: "Check status by package and flavour"
+  pt: "Status de check por pacote e flavor"
+cran.checks.lead:
+  en: "One column per CRAN check flavour, latest snapshot only. Status is given as text, never by colour alone (RNF-10)."
+  pt: "Uma coluna por flavor de check do CRAN, apenas o snapshot mais recente. O status é dado por texto, nunca apenas por cor (RNF-10)."
+cran.checks.none:
+  en: "No check result has been collected yet."
+  pt: "Nenhum resultado de check foi coletado ainda."
+cran.col.flavor:
+  en: "Flavour"
+  pt: "Flavor"
+cran.col.on_cran:
+  en: "On CRAN"
+  pt: "No CRAN"
+cran.col.archived:
+  en: "Archived"
+  pt: "Arquivado"
+cran.col.maintainer:
+  en: "Maintainer"
+  pt: "Mantenedor"
+cran.col.worst_status:
+  en: "Worst status"
+  pt: "Pior status"
+cran.col.n_flavors:
+  en: "Flavours checked"
+  pt: "Flavors verificados"
+cran.col.n_flavors_not_ok:
+  en: "Flavours outside OK"
+  pt: "Flavors fora de OK"
+cran.col.check_time:
+  en: "Check time (s)"
+  pt: "Tempo de check (s)"
+cran.col.release_date:
+  en: "Release date"
+  pt: "Data de publicação"
+cran.col.is_current:
+  en: "Current"
+  pt: "Vigente"
+cran.col.downloads:
+  en: "Downloads"
+  pt: "Downloads"
+cran.downloads.title:
+  en: "Daily downloads"
+  pt: "Downloads diários"
+cran.downloads.none:
+  en: "No download series has been collected yet."
+  pt: "Nenhuma série de downloads foi coletada ainda."
+cran.downloads.markers:
+  en: "The dashed vertical lines mark CRAN releases. Each one is followed by a jump of several times the baseline, produced by the rebuilding of Windows and macOS binaries. The markers exist to make that artefact visible, not to correct it."
+  pt: "As linhas verticais tracejadas marcam releases no CRAN. Cada uma é seguida por um salto de várias vezes a linha de base, produzido pela reconstrução de binários Windows e macOS. Os marcadores existem para tornar esse artefato visível, não para corrigi-lo."
+cran.downloads.alt:
+  en: "Line chart of daily downloads per package from the Posit mirror, one panel per package, with dashed vertical lines at CRAN release dates. Data up to {date}."
+  pt: "Gráfico de linhas dos downloads diários por pacote no mirror da Posit, um painel por pacote, com linhas verticais tracejadas nas datas de release no CRAN. Dados até {date}."
+cran.downloads.axis_y:
+  en: "Downloads per day (partial sample)"
+  pt: "Downloads por dia (amostra parcial)"
+cran.downloads.axis_x:
+  en: "Day"
+  pt: "Dia"
+cran.downloads.summary_title:
+  en: "Download sample per package"
+  pt: "Amostra de downloads por pacote"
+cran.downloads.col_window:
+  en: "Exported window"
+  pt: "Janela exportada"
+cran.monthly.title:
+  en: "Permanent monthly archive"
+  pt: "Arquivo mensal permanente"
+cran.monthly.lead:
+  en: "Monthly rollup, kept indefinitely. The daily series above is pruned to a rolling 12-month window (SPEC.md S4.3)."
+  pt: "Rollup mensal, mantido indefinidamente. A série diária acima é podada para uma janela móvel de 12 meses (SPEC.md S4.3)."
+cran.monthly.none:
+  en: "No month has been rolled up yet."
+  pt: "Nenhum mês foi consolidado ainda."
+cran.monthly.alt:
+  en: "Bar chart of monthly downloads per package from the Posit mirror, permanent archive. Data up to {date}."
+  pt: "Gráfico de barras dos downloads mensais por pacote no mirror da Posit, arquivo permanente. Dados até {date}."
+cran.monthly.axis_y:
+  en: "Downloads per month (partial sample)"
+  pt: "Downloads por mês (amostra parcial)"
+cran.versions.title:
+  en: "Version history"
+  pt: "Histórico de versões"
+cran.versions.lead:
+  en: "Permanent table: every version published to CRAN, newest first."
+  pt: "Tabela permanente: todas as versões publicadas no CRAN, da mais recente para a mais antiga."
+cran.versions.none:
+  en: "No version history has been collected yet."
+  pt: "Nenhum histórico de versões foi coletado ainda."
+
+# -- GitHub page --------------------------------------------------------------
+github.title:
+  en: "GitHub"
+  pt: "GitHub"
+github.lead:
+  en: "State of each curated repository, issue and pull-request activity, traffic since collection began, and commits as a secondary series."
+  pt: "Estado de cada repositório curado, atividade de issues e pull requests, tráfego desde o início da coleta e commits como série secundária."
+github.repos.title:
+  en: "Repository state"
+  pt: "Estado dos repositórios"
+github.repos.none:
+  en: "No repository snapshot has been collected yet."
+  pt: "Nenhum snapshot de repositório foi coletado ainda."
+github.col.open_issues:
+  en: "Open issues"
+  pt: "Issues abertas"
+github.col.open_prs:
+  en: "Open PRs"
+  pt: "PRs abertos"
+github.col.oldest_issue:
+  en: "Oldest open issue"
+  pt: "Issue aberta mais antiga"
+github.col.stars:
+  en: "Stars"
+  pt: "Estrelas"
+github.col.forks:
+  en: "Forks"
+  pt: "Forks"
+github.col.watchers:
+  en: "Watchers"
+  pt: "Observadores"
+github.col.last_push:
+  en: "Last push"
+  pt: "Último push"
+github.col.archived:
+  en: "Archived"
+  pt: "Arquivado"
+github.days:
+  en: "{n} days"
+  pt: "{n} dias"
+github.issue_age.title:
+  en: "Age of the oldest open issue"
+  pt: "Idade da issue aberta mais antiga"
+github.issue_age.lead:
+  en: "Age, not count: an old open issue is a signal, a large backlog of fresh ones usually is not."
+  pt: "Idade, não contagem: uma issue aberta antiga é um sinal, um acúmulo de issues recentes normalmente não é."
+github.issue_age.alt:
+  en: "Horizontal bar chart of the age in days of the oldest open issue per repository. Data up to {date}."
+  pt: "Gráfico de barras horizontais da idade em dias da issue aberta mais antiga por repositório. Dados até {date}."
+github.issue_age.axis_x:
+  en: "Days since the oldest open issue was opened"
+  pt: "Dias desde a abertura da issue aberta mais antiga"
+github.issue_age.none:
+  en: "No repository currently has an open issue."
+  pt: "Nenhum repositório tem issue aberta no momento."
+github.activity.title:
+  en: "Issue and pull-request activity"
+  pt: "Atividade de issues e pull requests"
+github.activity.lead:
+  en: "Daily counts per repository. Merged and closed pull requests are disjoint: a merged pull request is counted only as merged."
+  pt: "Contagens diárias por repositório. Pull requests mesclados e fechados são disjuntos: um pull request mesclado é contado apenas como mesclado."
+github.activity.none:
+  en: "No GitHub activity has been collected yet."
+  pt: "Nenhuma atividade do GitHub foi coletada ainda."
+github.activity.alt:
+  en: "Line chart of daily issue and pull-request events per repository, one panel per repository, with a distinct line type per event. Data up to {date}."
+  pt: "Gráfico de linhas dos eventos diários de issues e pull requests por repositório, um painel por repositório, com um tipo de linha distinto por evento. Dados até {date}."
+github.activity.axis_y:
+  en: "Events per day"
+  pt: "Eventos por dia"
+github.metric.prs_opened:
+  en: "PRs opened"
+  pt: "PRs abertos"
+github.metric.prs_merged:
+  en: "PRs merged"
+  pt: "PRs mesclados"
+github.metric.prs_closed:
+  en: "PRs closed without merging"
+  pt: "PRs fechados sem merge"
+github.metric.issues_opened:
+  en: "Issues opened"
+  pt: "Issues abertas"
+github.metric.issues_closed:
+  en: "Issues closed"
+  pt: "Issues fechadas"
+github.metric.commits:
+  en: "Commits"
+  pt: "Commits"
+github.metric.views:
+  en: "Views"
+  pt: "Visualizações"
+github.metric.view_uniques:
+  en: "Unique visitors"
+  pt: "Visitantes únicos"
+github.metric.clones:
+  en: "Clones"
+  pt: "Clones"
+github.metric.clone_uniques:
+  en: "Unique cloners"
+  pt: "Clonadores únicos"
+github.metric.label:
+  en: "Event"
+  pt: "Evento"
+github.traffic.title:
+  en: "Traffic"
+  pt: "Tráfego"
+github.traffic.lead:
+  en: "Views and clones per repository. The GitHub traffic API retains fourteen days and nothing more, so this series is the only long-term copy of the data and it starts on the day collection began."
+  pt: "Visualizações e clones por repositório. A API de tráfego do GitHub retém quatorze dias e nada mais, então esta série é a única cópia de longo prazo do dado e começa no dia em que a coleta foi iniciada."
+github.traffic.none:
+  en: "No traffic has been collected yet."
+  pt: "Nenhum tráfego foi coletado ainda."
+github.traffic.started:
+  en: "{repo}: collection started on {date}"
+  pt: "{repo}: coleta iniciada em {date}"
+github.traffic.started_title:
+  en: "Start of series, per repository"
+  pt: "Início da série, por repositório"
+github.traffic.alt:
+  en: "Line chart of daily repository views and clones, one panel per repository, each series beginning on the day collection started for that repository. Data up to {date}."
+  pt: "Gráfico de linhas das visualizações e clones diários por repositório, um painel por repositório, cada série começando no dia em que a coleta foi iniciada para aquele repositório. Dados até {date}."
+github.traffic.axis_y:
+  en: "Events per day"
+  pt: "Eventos por dia"
+github.traffic.monthly_title:
+  en: "Permanent monthly traffic archive"
+  pt: "Arquivo mensal permanente de tráfego"
+github.traffic.uniques_note:
+  en: "In the monthly archive the unique columns are sums of daily uniques, that is an upper bound on distinct visitors, not a distinct count."
+  pt: "No arquivo mensal, as colunas de únicos são somas de únicos diários, ou seja, um limite superior para visitantes distintos, não uma contagem de distintos."
+github.commits.title:
+  en: "Commits, secondary series"
+  pt: "Commits, série secundária"
+github.commits.lead:
+  en: "Published here and nowhere else, deliberately. Raw commit volume is subject to Goodhart's law: it measures typing, not production. It is shown as one series among others, never as a headline figure, and the dashboard sets no target and tracks no streak (SPEC.md NG-2)."
+  pt: "Publicado aqui e em nenhum outro lugar, deliberadamente. O volume bruto de commits está sujeito à lei de Goodhart: mede digitação, não produção. Aparece como uma série entre outras, nunca como número de destaque, e o painel não define meta nem acompanha sequência (SPEC.md NG-2)."
+github.commits.none:
+  en: "No commit series has been collected yet."
+  pt: "Nenhuma série de commits foi coletada ainda."
+github.commits.alt:
+  en: "Line chart of daily commits on the default branch per repository, one panel per repository, shown as a secondary series. Data up to {date}."
+  pt: "Gráfico de linhas dos commits diários no branch padrão por repositório, um painel por repositório, exibido como série secundária. Dados até {date}."
+github.commits.axis_y:
+  en: "Commits per day on the default branch"
+  pt: "Commits por dia no branch padrão"
+github.releases.title:
+  en: "Releases"
+  pt: "Releases"
+github.releases.lead:
+  en: "Permanent table, newest first."
+  pt: "Tabela permanente, da mais recente para a mais antiga."
+github.releases.none:
+  en: "No release has been collected yet."
+  pt: "Nenhuma release foi coletada ainda."
+github.col.tag:
+  en: "Tag"
+  pt: "Tag"
+github.col.release_name:
+  en: "Name"
+  pt: "Nome"
+github.col.published_at:
+  en: "Published"
+  pt: "Publicada"
+github.col.prerelease:
+  en: "Pre-release"
+  pt: "Pré-release"
+github.privacy_note:
+  en: "Aggregates per repository only. No issue title, no author, no e-mail address is collected or published (SPEC.md NG-5)."
+  pt: "Apenas agregados por repositório. Nenhum título de issue, autor ou endereço de e-mail é coletado ou publicado (SPEC.md NG-5)."
+
+# -- Academic page ------------------------------------------------------------
+academic.title:
+  en: "Academic"
+  pt: "Acadêmico"
+academic.lead:
+  en: "Publications, software and preprints attributed to the configured ORCID iD, with citation counts as indexed by OpenAlex."
+  pt: "Publicações, software e preprints atribuídos ao ORCID iD configurado, com contagens de citação conforme indexadas pelo OpenAlex."
+academic.totals.works:
+  en: "Works indexed"
+  pt: "Trabalhos indexados"
+academic.totals.citations:
+  en: "Citations accumulated"
+  pt: "Citações acumuladas"
+academic.works.title:
+  en: "Works"
+  pt: "Trabalhos"
+academic.works.none:
+  en: "No academic work has been collected yet."
+  pt: "Nenhum trabalho acadêmico foi coletado ainda."
+academic.col.title:
+  en: "Title"
+  pt: "Título"
+academic.col.venue:
+  en: "Venue"
+  pt: "Veículo"
+academic.col.year:
+  en: "Year"
+  pt: "Ano"
+academic.col.type:
+  en: "Type"
+  pt: "Tipo"
+academic.col.citations:
+  en: "Citations"
+  pt: "Citações"
+academic.col.works:
+  en: "Works"
+  pt: "Trabalhos"
+academic.by_year.title:
+  en: "Works and citations by year"
+  pt: "Trabalhos e citações por ano"
+academic.by_year.none:
+  en: "Nothing to summarise by year yet."
+  pt: "Nada a resumir por ano ainda."
+academic.by_year.alt:
+  en: "Grouped bar chart of the number of works and the accumulated citations per publication year. Snapshot of {date}."
+  pt: "Gráfico de barras agrupadas do número de trabalhos e das citações acumuladas por ano de publicação. Snapshot de {date}."
+academic.by_year.axis_y:
+  en: "Count"
+  pt: "Contagem"
+academic.by_type.title:
+  en: "Works and citations by type"
+  pt: "Trabalhos e citações por tipo"
+academic.by_type.none:
+  en: "Nothing to summarise by type yet."
+  pt: "Nada a resumir por tipo ainda."
+academic.type_note:
+  en: "The type is OpenAlex's own vocabulary, passed through unchanged."
+  pt: "O tipo é o vocabulário do próprio OpenAlex, repassado sem alteração."
+academic.lag_note:
+  en: "Citation counts lag indexing by weeks to months and OpenAlex coverage of research software is incomplete. Treat every number on this page as a lower bound."
+  pt: "As contagens de citação têm defasagem de indexação de semanas a meses e a cobertura do OpenAlex para software de pesquisa é incompleta. Trate todo número desta página como um limite inferior."
+
+# -- About page ---------------------------------------------------------------
+about.title:
+  en: "About"
+  pt: "Sobre"
+about.lead:
+  en: "What this dashboard measures, where the numbers come from, what they cannot support, and under which licence they are published."
+  pt: "O que este painel mede, de onde vêm os números, o que eles não sustentam e sob qual licença são publicados."
+
+about.purpose.title:
+  en: "Purpose"
+  pt: "Objetivo"
+about.purpose.body:
+  en: "A static dashboard, updated daily and without a server, consolidating in one place the health of the R packages published on CRAN, their download history, development activity in the curated GitHub repositories, and the associated academic output. It serves two purposes at once: operational, detecting a CRAN regression before the official notification, and showcase, as a public portfolio artefact."
+  pt: "Um painel estático, atualizado diariamente e sem servidor, que consolida em um único lugar a saúde dos pacotes R publicados no CRAN, a sua série histórica de downloads, a atividade de desenvolvimento nos repositórios GitHub curados e a produção acadêmica associada. Serve a dois propósitos simultâneos: operacional, detectando uma regressão no CRAN antes da notificação oficial, e vitrine, como artefato público de portfólio."
+
+about.method.title:
+  en: "Methodology"
+  pt: "Metodologia"
+about.method.body:
+  en: "A scheduled job collects each source independently once a day, writes the result to a typed, columnar store, and derives from it the JSON this page reads. A failing source degrades only its own section; the rest of the dashboard still publishes with the data available. Writes are idempotent by natural key, so re-running the pipeline on the same day does not duplicate a row. Only official APIs and artefacts are used: no HTML is scraped."
+  pt: "Um job agendado coleta cada fonte de forma independente uma vez por dia, grava o resultado em um armazenamento colunar tipado e dele deriva o JSON que esta página lê. Uma fonte com falha degrada apenas a sua própria seção; o restante do painel continua publicando com o dado disponível. As escritas são idempotentes por chave natural, então reexecutar o pipeline no mesmo dia não duplica linhas. Apenas APIs e artefatos oficiais são usados: nenhum HTML é raspado."
+about.method.curation:
+  en: "The set of packages and repositories is curated explicitly in `config/repos.yml`. Anything not listed there is not collected, not aggregated and not displayed: curation is an editorial decision, not a display filter."
+  pt: "O conjunto de pacotes e repositórios é curado explicitamente em `config/repos.yml`. O que não está listado ali não é coletado, não é agregado e não é exibido: curadoria é decisão editorial, não filtro de exibição."
+about.method.retention:
+  en: "Daily granularity is retained for a rolling twelve months; a monthly rollup is kept permanently. The rollup is written before any pruning, and pruning is aborted if the rollup fails, because repository traffic is the one series that cannot be reconstructed."
+  pt: "A granularidade diária é retida por doze meses móveis; um rollup mensal é mantido permanentemente. O rollup é gravado antes de qualquer poda, e a poda é abortada se o rollup falhar, porque o tráfego de repositório é a única série que não pode ser reconstituída."
+about.method.privacy:
+  en: "Only aggregates per package and per repository are published. No contributor profile, issue author or e-mail address is collected."
+  pt: "Apenas agregados por pacote e por repositório são publicados. Nenhum perfil de contribuidor, autor de issue ou endereço de e-mail é coletado."
+
+about.sources.title:
+  en: "Data sources"
+  pt: "Fontes de dados"
+about.sources.col.source:
+  en: "Source"
+  pt: "Fonte"
+about.sources.col.endpoint:
+  en: "Endpoint or function"
+  pt: "Endpoint ou função"
+about.sources.col.auth:
+  en: "Authentication"
+  pt: "Autenticação"
+about.sources.col.retro:
+  en: "Retroactive"
+  pt: "Retroativo"
+about.sources.col.limit:
+  en: "Rate limit"
+  pt: "Limite de uso"
+about.src.downloads.name:
+  en: "CRAN downloads"
+  pt: "Downloads do CRAN"
+about.src.downloads.endpoint:
+  en: "`cranlogs::cran_downloads()` → `cranlogs.r-pkg.org`"
+  pt: "`cranlogs::cran_downloads()` → `cranlogs.r-pkg.org`"
+about.src.downloads.auth:
+  en: "none"
+  pt: "nenhuma"
+about.src.downloads.retro:
+  en: "yes, since 2012-10"
+  pt: "sim, desde 2012-10"
+about.src.downloads.limit:
+  en: "courtesy; at most 1 request per package per day"
+  pt: "cortesia; no máximo 1 req/pacote/dia"
+about.src.versions.name:
+  en: "Versions and metadata"
+  pt: "Versões e metadados"
+about.src.versions.endpoint:
+  en: "`crandb.r-pkg.org/{pkg}/all`"
+  pt: "`crandb.r-pkg.org/{pkg}/all`"
+about.src.versions.auth:
+  en: "none"
+  pt: "nenhuma"
+about.src.versions.retro:
+  en: "yes"
+  pt: "sim"
+about.src.versions.limit:
+  en: "courtesy"
+  pt: "cortesia"
+about.src.checks.name:
+  en: "Check results"
+  pt: "Resultados de check"
+about.src.checks.endpoint:
+  en: "`tools::CRAN_check_results()`, reading the official `.rds`"
+  pt: "`tools::CRAN_check_results()`, lendo o `.rds` oficial"
+about.src.checks.auth:
+  en: "none"
+  pt: "nenhuma"
+about.src.checks.retro:
+  en: "no"
+  pt: "não"
+about.src.checks.limit:
+  en: "1 request per day"
+  pt: "1 req/dia"
+about.src.archive.name:
+  en: "Archival status"
+  pt: "Status de arquivamento"
+about.src.archive.endpoint:
+  en: "`tools::CRAN_package_db()` plus the `Archive/` index"
+  pt: "`tools::CRAN_package_db()` mais o índice `Archive/`"
+about.src.archive.auth:
+  en: "none"
+  pt: "nenhuma"
+about.src.archive.retro:
+  en: "no"
+  pt: "não"
+about.src.archive.limit:
+  en: "1 request per day"
+  pt: "1 req/dia"
+about.src.activity.name:
+  en: "GitHub activity"
+  pt: "Atividade no GitHub"
+about.src.activity.endpoint:
+  en: "GraphQL v4: `repository{...}`, `contributionsCollection`"
+  pt: "GraphQL v4: `repository{...}`, `contributionsCollection`"
+about.src.activity.auth:
+  en: "fine-grained personal access token"
+  pt: "personal access token fine-grained"
+about.src.activity.retro:
+  en: "yes"
+  pt: "sim"
+about.src.activity.limit:
+  en: "5,000 points per hour"
+  pt: "5.000 pontos/h"
+about.src.traffic.name:
+  en: "GitHub traffic"
+  pt: "Tráfego no GitHub"
+about.src.traffic.endpoint:
+  en: "REST `/repos/{owner}/{repo}/traffic/{views,clones}`"
+  pt: "REST `/repos/{owner}/{repo}/traffic/{views,clones}`"
+about.src.traffic.auth:
+  en: "token with `Administration: read`"
+  pt: "token com `Administration: read`"
+about.src.traffic.retro:
+  en: "no — 14 days only"
+  pt: "não — apenas 14 dias"
+about.src.traffic.limit:
+  en: "5,000 requests per hour"
+  pt: "5.000 req/h"
+about.src.academic.name:
+  en: "Academic output"
+  pt: "Produção acadêmica"
+about.src.academic.endpoint:
+  en: "OpenAlex `api.openalex.org/works?filter=author.orcid:…`"
+  pt: "OpenAlex `api.openalex.org/works?filter=author.orcid:…`"
+about.src.academic.auth:
+  en: "e-mail address, polite pool"
+  pt: "endereço de e-mail, polite pool"
+about.src.academic.retro:
+  en: "yes"
+  pt: "sim"
+about.src.academic.limit:
+  en: "about 100,000 requests per day"
+  pt: "cerca de 100.000 req/dia"
+
+# -- SPEC.md S10, published in full and in both languages. NORMATIVE. ---------
+about.limits.title:
+  en: "Declared limitations"
+  pt: "Limitações declaradas"
+about.limits.lead:
+  en: "Methodological transparency is a requirement, not a courtesy. The text below is normative and is published in both languages."
+  pt: "Transparência metodológica é requisito, não cortesia. O texto abaixo é normativo e é publicado nos dois idiomas."
+about.limit.1.title:
+  en: "Downloads are not a census."
+  pt: "Downloads não são censo."
+about.limit.1.body:
+  en: "The series reflects exclusively the `cloud.r-project.org` (Posit) mirror. There is no known inclusion probability for the remaining mirrors; therefore no unbiased estimator of the total number of downloads exists. Use the series for relative trend, never as an absolute level."
+  pt: "A série reflete exclusivamente o mirror `cloud.r-project.org` (Posit). Não há probabilidade de inclusão conhecida para os demais mirrors; portanto, não existe estimador não-enviesado do total de downloads. Use a série para tendência relativa, nunca como nível absoluto."
+about.limit.2.title:
+  en: "Contamination by automation."
+  pt: "Contaminação por automação."
+about.limit.2.body:
+  en: "CRAN check farms, Docker images and third-party CI pipelines inflate the count. In niche packages, the non-human fraction may be the majority."
+  pt: "Farms de check do CRAN, imagens Docker e pipelines de CI de terceiros inflam a contagem. Em pacotes de nicho, a fração não-humana pode ser majoritária."
+about.limit.3.title:
+  en: "Release artefact."
+  pt: "Artefato de release."
+about.limit.3.body:
+  en: "Every new version produces a jump of several times the baseline, caused by the rebuilding of Windows and macOS binaries. The release markers on the chart exist to make that artefact visible — not to correct it."
+  pt: "Cada nova versão gera um salto de várias vezes a linha de base pela reconstrução de binários Windows/macOS. Os marcadores de release no gráfico existem para tornar esse artefato visível — não para corrigi-lo."
+about.limit.4.title:
+  en: "Traffic with a truncated start."
+  pt: "Tráfego com início truncado."
+about.limit.4.body:
+  en: "The series begins on the date of the first collection; the period before it is inaccessible by design of the API."
+  pt: "A série começa na data da primeira coleta; o período anterior é inacessível por design da API."
+about.limit.5.title:
+  en: "Citations with a lag."
+  pt: "Citações com defasagem."
+about.limit.5.body:
+  en: "OpenAlex counts have an indexing latency of weeks to months and incomplete coverage for software."
+  pt: "Contagens do OpenAlex têm latência de indexação de semanas a meses e cobertura incompleta para software."
+
+about.nongoals.title:
+  en: "What this dashboard deliberately does not do"
+  pt: "O que este painel deliberadamente não faz"
+about.nongoals.modelling:
+  en: "**No modelling, forecasting or anomaly detection.** The dashboard is descriptive. CRAN download series are a convenience sample from a single mirror, contaminated by continuous integration and bots; modelling them would produce inference with no external validity."
+  pt: "**Sem modelagem, previsão ou detecção de anomalia.** O painel é descritivo. As séries de download do CRAN são amostra de conveniência de um único mirror, contaminada por CI e bots; modelá-las produziria inferência sem validade externa."
+about.nongoals.commits:
+  en: "**No commit-count ranking or target as a headline indicator.** The metric is subject to Goodhart's law: it measures typing volume, not production. Commits appear only as a secondary series on the GitHub page."
+  pt: "**Sem ranking ou meta de contagem bruta de commits como indicador de destaque.** A métrica está sujeita à lei de Goodhart: mede volume de digitação, não produção. Commits aparecem apenas como série secundária na página GitHub."
+about.nongoals.thirdparty:
+  en: "**No collection of identifiable third-party data.** Contributor profiles and issue e-mail addresses are out of scope; only per-repository aggregates are published."
+  pt: "**Sem coleta de dados identificáveis de terceiros.** Perfis de contribuidores e e-mails de issues estão fora de escopo; apenas agregados por repositório são publicados."
+
+about.license.title:
+  en: "Licence"
+  pt: "Licença"
+about.license.body:
+  en: "Code is published under the MIT licence. The aggregated data published on this site is available under CC-BY-4.0. Upstream data remains subject to the terms of its own provider: CRAN, GitHub and OpenAlex."
+  pt: "O código é publicado sob a licença MIT. Os dados agregados publicados neste site estão disponíveis sob CC-BY-4.0. O dado de origem permanece sujeito aos termos do seu próprio provedor: CRAN, GitHub e OpenAlex."
+
+about.source.title:
+  en: "Source code"
+  pt: "Código-fonte"
+about.source.body:
+  en: "The collectors, the consolidation pipeline and this site are a single open-source repository. The full, normative specification lives in `SPEC.md` at its root."
+  pt: "Os coletores, o pipeline de consolidação e este site são um único repositório open source. A especificação completa e normativa vive em `SPEC.md` na sua raiz."
+about.source.link_label:
+  en: "evandeilton/prod-monitor on GitHub"
+  pt: "evandeilton/prod-monitor no GitHub"
+about.source.issues_label:
+  en: "Report a problem with this dashboard"
+  pt: "Relatar um problema neste painel"
+about.source.issues_body:
+  en: "Corrections, questions about the methodology and bug reports belong in the repository's issue tracker, where the discussion stays public and auditable."
+  pt: "Correções, dúvidas sobre a metodologia e relatos de erro devem ir para o issue tracker do repositório, onde a discussão permanece pública e auditável."
+
+about.build.title:
+  en: "This build"
+  pt: "Este build"
+about.build.generated:
+  en: "JSON generated at"
+  pt: "JSON gerado em"
+about.build.schema:
+  en: "Data schema version"
+  pt: "Versão do esquema de dados"
+about.build.package:
+  en: "Pipeline version"
+  pt: "Versão do pipeline"
+about.build.latest:
+  en: "Most recent datum"
+  pt: "Dado mais recente"
+about.build.retention:
+  en: "Daily retention, in months"
+  pt: "Retenção diária, em meses"
+about.build.col.field:
+  en: "Field"
+  pt: "Campo"
+about.build.col.value:
+  en: "Value"
+  pt: "Valor"
+about.build.rows.title:
+  en: "Rows stored per table"
+  pt: "Linhas armazenadas por tabela"
+about.build.col.table:
+  en: "Table"
+  pt: "Tabela"
+about.build.col.rows:
+  en: "Rows"
+  pt: "Linhas"
+about.build.col.latest:
+  en: "Most recent datum"
+  pt: "Dado mais recente"

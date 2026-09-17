@@ -1,0 +1,116 @@
+name: test
+
+# Pull-request gate (SPEC.md §14).
+#
+# Two jobs:
+#   R-CMD-check - the standard r-lib/actions pipeline. `check-r-package` runs
+#                 `R CMD check`, which runs the whole testthat suite
+#                 (tests/testthat.R), including test-idempotency,
+#                 test-traffic-merge, test-retention-order and test-i18n-parity.
+#   smoke       - what R CMD check structurally cannot cover: Quarto. A package
+#                 check never looks at site/, so a broken .qmd would otherwise
+#                 only surface in the nightly production run.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  R-CMD-check:
+    name: R CMD check (ubuntu-latest, release)
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    env:
+      # Raises pak's GitHub API rate limit while resolving dependencies. Unlike
+      # collect.yml there is no collector here, so there is no fine-grained PAT
+      # for this to shadow.
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+          # The smoke job below sets Quarto up explicitly; R CMD check does not
+          # need it, and the repository's .qmd files would otherwise trigger the
+          # action's `auto` detection here too.
+          install-quarto: 'false'
+
+      - name: Check
+        uses: r-lib/actions/check-r-package@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
+        with:
+          # RNF-8 at the package level: a warning fails the build.
+          error-on: '"warning"'
+          upload-snapshots: true
+
+  smoke:
+    name: smoke test (export_json + quarto render)
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up R, Quarto and install zboard
+        uses: ./.github/actions/setup-zboard
+        with:
+          quarto: 'true'
+
+      # The `data` branch is deliberately NOT checked out here: export_json()
+      # must produce empty-but-valid JSON when there is nothing to export, and
+      # the render must succeed against it. That is the contract the dashboard
+      # relies on for its first ever build and after a failed collection.
+      - name: Export JSON from an empty data directory
+        shell: Rscript {0}
+        run: |
+          ## Deliberately NOT options(warn = 2): an empty data/ legitimately
+          ## warns. RNF-8 is enforced on the production pipeline (collect.yml)
+          ## and, for the package code itself, by error-on: warning above.
+          zboard::export_json(data_dir = "data", output_dir = "site/_data")
+          cat("Exported files:\n")
+          print(list.files("site/_data", recursive = TRUE))
+
+      - name: Are the Quarto sources present yet?
+        id: site
+        shell: bash
+        run: |
+          set -euo pipefail
+          if compgen -G 'site/*.qmd' > /dev/null; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=No Quarto sources::site/*.qmd not found; skipping the render smoke test."
+          fi
+
+      - name: Render the English profile
+        # Structural check of the .qmd sources before merge. Only the EN profile:
+        # both profiles share the same sources, so a second render would catch
+        # little beyond the profile file itself, and the i18n key parity that
+        # does differ between them is covered by test-i18n-parity in R CMD check.
+        if: steps.site.outputs.present == 'true'
+        run: quarto render site --profile en

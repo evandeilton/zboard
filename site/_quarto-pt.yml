@@ -1,0 +1,46 @@
+# =============================================================================
+# Perfil português -- OVERRIDE aplicado sobre `_quarto.yml` (SPEC.md ADR-4).
+# =============================================================================
+#
+#   quarto render site --profile pt   ->  ../_site/pt     (subdiretório "/pt/")
+#
+# `output-dir` sobrescreve o valor do arquivo base e é o caminho que
+# .github/workflows/collect.yml espera. Renderizado DEPOIS do perfil `en`:
+# o Quarto limpa o seu diretório de saída, e `_site/pt` está dentro de
+# `_site`, então inverter a ordem apagaria o build português.
+#
+# Cada `text:` abaixo é o valor `pt` da chave `nav.*` correspondente em
+# config/i18n.yml. A navbar do Quarto é YAML e não pode chamar R, então
+# estas são as únicas strings visíveis fora do i18n.yml -- e
+# tests/testthat/test-i18n-parity.R garante que permaneçam idênticas a ele.
+
+lang: pt
+
+project:
+  output-dir: ../_site/pt
+
+website:
+  title: "prod-monitor"
+  description: "Painel estático, atualizado diariamente, com a saúde dos pacotes no CRAN, a atividade de desenvolvimento no GitHub e a produção acadêmica de um conjunto curado de pacotes R e repositórios."
+  navbar:
+    background: light
+    search: false
+    left:
+      - href: index.qmd
+        text: "Visão geral"
+      - href: cran.qmd
+        text: "CRAN"
+      - href: github.qmd
+        text: "GitHub"
+      - href: academic.qmd
+        text: "Acadêmico"
+      - href: about.qmd
+        text: "Sobre"
+    right:
+      - icon: github
+        href: https://github.com/evandeilton/prod-monitor
+        aria-label: "Código-fonte"
+  page-footer:
+    border: true
+    left: "Código sob licença MIT · dados agregados sob CC-BY-4.0"
+    right: "[Código-fonte](https://github.com/evandeilton/prod-monitor)"

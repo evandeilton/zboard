@@ -1,0 +1,91 @@
+name: 'Setup zboard'
+description: >
+  Sets up R, restores the package dependencies (from renv.lock when it exists,
+  from DESCRIPTION via pak otherwise), optionally installs Quarto, and installs
+  the zboard package itself from the current checkout. Every downstream step in
+  the pipeline is then a plain `zboard::fn()` call.
+
+  This is a *local* action, so SPEC.md §11 ("third-party actions pinned by SHA")
+  applies to the actions it calls, not to the reference to this file. Keeping the
+  pins in one place is the reason this action exists: the same six setup steps are
+  needed by five jobs across two workflows.
+
+inputs:
+  quarto:
+    description: 'Install Quarto ("true"/"false"). Only jobs that render site/ need it.'
+    required: false
+    default: 'false'
+  cache-version:
+    description: 'Bump to invalidate the cached R package library.'
+    required: false
+    default: '1'
+
+runs:
+  using: 'composite'
+  steps:
+    # RNF-6 pins the R dependency set via renv.lock. That file is produced by a
+    # real `renv::snapshot()` once the package code is complete, so until then
+    # the workflows must still run: fall back to a DESCRIPTION-driven install
+    # rather than failing on a missing lockfile.
+    - name: Detect renv.lock
+      id: renv
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -f renv.lock ]; then
+          echo "present=true" >> "$GITHUB_OUTPUT"
+          echo "renv.lock found: restoring the pinned dependency set (RNF-6)."
+        else
+          echo "present=false" >> "$GITHUB_OUTPUT"
+          echo "::notice title=No renv.lock::Falling back to a DESCRIPTION-driven install via pak. RNF-6 (reproducibility) is only satisfied once renv::snapshot() has written renv.lock."
+        fi
+
+    - name: Set up R
+      uses: r-lib/actions/setup-r@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
+      with:
+        r-version: release
+        use-public-rspm: true
+
+    - name: Restore dependencies from renv.lock
+      if: steps.renv.outputs.present == 'true'
+      uses: r-lib/actions/setup-renv@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
+      with:
+        cache-version: ${{ inputs.cache-version }}
+
+    - name: Install dependencies from DESCRIPTION
+      if: steps.renv.outputs.present == 'false'
+      uses: r-lib/actions/setup-r-dependencies@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
+      with:
+        cache-version: ${{ inputs.cache-version }}
+        extra-packages: any::remotes
+        # Quarto is installed below by a SHA-pinned action instead, so that the
+        # Quarto toolchain is subject to the same pinning rule (SPEC.md §11).
+        install-quarto: 'false'
+
+    - name: Set up Quarto
+      if: inputs.quarto == 'true'
+      # TODO: consider pinning `version:` to an exact Quarto release once the
+      # site sources stabilise; `release` is a moving target (RNF-6).
+      uses: quarto-dev/quarto-actions/setup@8a96df13519ee81fd526f2dfca5962811136661b # v2.2.0
+
+    # Installing the package (rather than sourcing scripts) is what makes every
+    # pipeline step a documented, tested, exported function call.
+    - name: Install zboard from this checkout
+      shell: Rscript {0}
+      run: |
+        ## Deliberately NOT under options(warn = 2): a build/install warning from
+        ## a dependency must not abort the run. RNF-8 applies to the pipeline
+        ## steps, which set it individually.
+        if (!requireNamespace("remotes", quietly = TRUE)) {
+          install.packages("remotes")
+        }
+        remotes::install_local(
+          ".",
+          upgrade      = "never",
+          dependencies = TRUE,
+          force        = TRUE
+        )
+        cat(
+          "zboard ", as.character(utils::packageVersion("zboard")), " installed\n",
+          sep = ""
+        )

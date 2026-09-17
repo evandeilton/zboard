@@ -1,0 +1,322 @@
+---
+title: "`r {source('_setup.R'); tr('github.title')}`"
+---
+
+```{r}
+#| label: setup
+#| include: false
+## GitHub (SPEC.md S7.1): repository state, issue and pull-request activity,
+## traffic with its per-repository start-of-series notice, and releases.
+##
+## NG-2 governs the ordering of this page. Commits are the LAST section, one
+## series among several, with `github.commits.lead` stating why they sit
+## there. They appear on no other page and in no headline position.
+##
+## SPEC.md S10.4 is satisfied by `github.traffic.started`, printed once per
+## repository from `gh_traffic.json -> series[].series_start_date`.
+source("_setup.R")
+
+issues_json <- zb_json("gh_issues")
+activity_json <- zb_json("gh_activity")
+traffic_json <- zb_json("gh_traffic")
+releases_json <- zb_json("gh_releases")
+
+repos <- zb_df(issues_json$repos)
+activity <- zb_points(activity_json$series, "repo")
+traffic_series <- zb_df(traffic_json$series)
+traffic <- zb_points(traffic_json$series, "repo")
+traffic_monthly <- zb_df(traffic_json$monthly)
+releases <- zb_df(releases_json$releases)
+
+activity_date <- zb_get(activity_json, "latest_data_date")
+traffic_date <- zb_get(traffic_json, "latest_data_date")
+
+#' Reshape a wide daily table into the long form the charts expect, with the
+#' metric column already carrying its localised label.
+zb_long <- function(df, metrics) {
+  metrics <- intersect(metrics, names(df))
+  if (!length(metrics) || nrow(df) == 0L) {
+    return(data.frame())
+  }
+  parts <- lapply(metrics, function(m) {
+    data.frame(
+      date = df$date, repo = df$repo,
+      metric = factor(tr(paste0("github.metric.", m)), levels = zb_metric_labels(metrics)),
+      value = as.numeric(df[[m]]),
+      stringsAsFactors = FALSE
+    )
+  })
+  do.call(rbind, parts)
+}
+```
+
+```{r}
+#| label: header
+#| results: asis
+zb_out(zb_page_header("github.html", zb_get(issues_json, "snapshot_date")))
+```
+
+`r tr("github.lead")`
+
+```{r}
+#| label: privacy
+#| results: asis
+zb_out(zb_note(tr("github.privacy_note")))
+```
+
+## `r tr("github.repos.title")`
+
+```{r}
+#| label: repos
+#| results: asis
+if (nrow(repos) == 0L) {
+  zb_out(zb_no_data(tr("github.repos.none")))
+} else {
+  repos <- repos[order(repos$repo), , drop = FALSE]
+  table <- data.frame(
+    repo = paste0(
+      '<a href="https://github.com/', zb_esc_attr(repos$repo), '">',
+      zb_esc(repos$repo), "</a>"
+    ),
+    open_issues = zb_int(repos$open_issues),
+    open_prs = zb_int(repos$open_prs),
+    oldest = ifelse(
+      is.na(repos$oldest_open_issue_days),
+      tr("common.none"),
+      tr_f("github.days", n = zb_int(repos$oldest_open_issue_days))
+    ),
+    stars = zb_int(repos$stars),
+    forks = zb_int(repos$forks),
+    watchers = zb_int(repos$watchers),
+    last_push = zb_datetime(repos$last_push_at),
+    archived = zb_bool(repos$archived),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(
+      tr("common.repository"), tr("github.col.open_issues"),
+      tr("github.col.open_prs"), tr("github.col.oldest_issue"),
+      tr("github.col.stars"), tr("github.col.forks"),
+      tr("github.col.watchers"), tr("github.col.last_push"),
+      tr("github.col.archived")
+    ),
+    caption = tr_f("common.snapshot_date",
+      date = zb_date(zb_get(issues_json, "snapshot_date"))
+    ),
+    align = c("l", "r", "r", "r", "r", "r", "r", "l", "l"),
+    raw = "repo"
+  ))
+}
+```
+
+## `r tr("github.issue_age.title")`
+
+`r tr("github.issue_age.lead")`
+
+```{r}
+#| label: issue-age
+#| results: asis
+aged <- repos[!is.na(repos$oldest_open_issue_days) & repos$oldest_open_issue_days > 0L, , drop = FALSE]
+if (nrow(aged) == 0L) {
+  zb_out(zb_no_data(tr("github.issue_age.none")))
+} else {
+  aged$repo <- factor(aged$repo, levels = aged$repo[order(aged$oldest_open_issue_days)])
+  plot <- ggplot(aged, aes(x = oldest_open_issue_days, y = repo)) +
+    geom_col(fill = zb_palette[[2L]], width = 0.6) +
+    geom_text(
+      aes(label = zb_int(oldest_open_issue_days)),
+      hjust = -0.15, size = 3.4, colour = "#1f2328"
+    ) +
+    scale_x_continuous(limits = c(0, max(aged$oldest_open_issue_days) * 1.15)) +
+    labs(x = tr("github.issue_age.axis_x"), y = NULL) +
+    zb_theme()
+
+  zb_out(zb_fig(
+    plot,
+    alt = tr_f("github.issue_age.alt", date = zb_date(zb_get(issues_json, "snapshot_date"))),
+    caption = zb_chart_dateline(zb_get(issues_json, "snapshot_date")),
+    height = zb_facet_height(nrow(aged), per = 0.45, base = 1.6)
+  ))
+}
+```
+
+## `r tr("github.activity.title")`
+
+`r tr("github.activity.lead")`
+
+```{r}
+#| label: activity
+#| results: asis
+issue_pr_metrics <- c(
+  "issues_opened", "issues_closed",
+  "prs_opened", "prs_merged", "prs_closed"
+)
+long <- zb_long(activity, issue_pr_metrics)
+if (nrow(long) == 0L || sum(long$value, na.rm = TRUE) == 0) {
+  zb_out(zb_no_data(tr("github.activity.none")))
+} else {
+  plot <- ggplot(long, aes(x = date, y = value, colour = metric, linetype = metric)) +
+    geom_line(linewidth = 0.55) +
+    facet_wrap(~repo, ncol = 1, scales = "free_y") +
+    scale_colour_manual(values = zb_palette) +
+    scale_linetype_manual(values = c("solid", "longdash", "dotted", "dotdash", "twodash")) +
+    zb_scale_x_day() +
+    scale_y_continuous(limits = c(0, NA)) +
+    labs(x = tr("common.date"), y = tr("github.activity.axis_y")) +
+    zb_theme()
+
+  zb_out(zb_fig(
+    plot,
+    alt = tr_f("github.activity.alt", date = zb_date(activity_date)),
+    caption = zb_chart_dateline(activity_date),
+    height = zb_facet_height(length(unique(long$repo)), per = 1.5, base = 1.6)
+  ))
+}
+```
+
+## `r tr("github.traffic.title")`
+
+`r tr("github.traffic.lead")`
+
+```{r}
+#| label: traffic-start
+#| results: asis
+# SPEC.md S10.4: the start of the series, stated per repository. Everything
+# before it is unrecoverable by design of the GitHub API.
+if (nrow(traffic_series) == 0L) {
+  zb_out(zb_no_data(tr("github.traffic.none")))
+} else {
+  notices <- vapply(
+    seq_len(nrow(traffic_series)),
+    function(i) {
+      paste0("<li>", zb_esc(tr_f(
+        "github.traffic.started",
+        repo = traffic_series$repo[[i]],
+        date = zb_date(traffic_series$series_start_date[[i]])
+      )), "</li>")
+    },
+    character(1)
+  )
+  zb_out(
+    '<p class="zb-note"><span class="zb-note-mark" aria-hidden="true">ⓘ</span> ',
+    zb_esc(tr("github.traffic.started_title")), "</p>",
+    '<ul class="zb-inline-list">', paste0(notices, collapse = ""), "</ul>"
+  )
+}
+```
+
+```{r}
+#| label: traffic-chart
+#| results: asis
+traffic_metrics <- c("views", "view_uniques", "clones", "clone_uniques")
+long <- zb_long(traffic, traffic_metrics)
+if (nrow(long) > 0L) {
+  plot <- ggplot(long, aes(x = date, y = value, colour = metric, linetype = metric)) +
+    geom_line(linewidth = 0.55) +
+    facet_wrap(~repo, ncol = 1, scales = "free_y") +
+    scale_colour_manual(values = zb_palette) +
+    scale_linetype_manual(values = c("solid", "longdash", "dotted", "dotdash")) +
+    zb_scale_x_day() +
+    scale_y_continuous(limits = c(0, NA)) +
+    labs(x = tr("common.date"), y = tr("github.traffic.axis_y")) +
+    zb_theme()
+
+  zb_out(zb_fig(
+    plot,
+    alt = tr_f("github.traffic.alt", date = zb_date(traffic_date)),
+    caption = zb_chart_dateline(traffic_date),
+    height = zb_facet_height(length(unique(long$repo)), per = 1.5, base = 1.6)
+  ))
+}
+```
+
+```{r}
+#| label: traffic-monthly
+#| results: asis
+if (nrow(traffic_monthly) > 0L) {
+  ordered <- traffic_monthly[order(traffic_monthly$month, traffic_monthly$repo), , drop = FALSE]
+  table <- data.frame(
+    month = zb_month(ordered$month),
+    repo = ordered$repo,
+    views = zb_int(ordered$views),
+    view_uniques = zb_int(ordered$view_uniques),
+    clones = zb_int(ordered$clones),
+    clone_uniques = zb_int(ordered$clone_uniques),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(
+      tr("common.month"), tr("common.repository"),
+      tr("github.metric.views"), tr("github.metric.view_uniques"),
+      tr("github.metric.clones"), tr("github.metric.clone_uniques")
+    ),
+    caption = tr("github.traffic.monthly_title"),
+    align = c("l", "l", "r", "r", "r", "r")
+  ))
+  zb_out(zb_note(tr("github.traffic.uniques_note")))
+}
+```
+
+## `r tr("github.releases.title")`
+
+`r tr("github.releases.lead")`
+
+```{r}
+#| label: releases
+#| results: asis
+if (nrow(releases) == 0L) {
+  zb_out(zb_no_data(tr("github.releases.none")))
+} else {
+  table <- data.frame(
+    repo = releases$repo,
+    tag = releases$tag,
+    name = ifelse(is.na(releases$name), tr("common.none"), releases$name),
+    published = zb_datetime(releases$published_at),
+    prerelease = zb_bool(releases$is_prerelease),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(
+      tr("common.repository"), tr("github.col.tag"),
+      tr("github.col.release_name"), tr("github.col.published_at"),
+      tr("github.col.prerelease")
+    ),
+    label = tr("github.releases.title"),
+    align = c("l", "l", "l", "l", "l")
+  ))
+}
+```
+
+## `r tr("github.commits.title")`
+
+`r tr("github.commits.lead")`
+
+```{r}
+#| label: commits
+#| results: asis
+# NG-2: commits appear here and nowhere else, as one secondary series at the
+# foot of one page. No total, no ranking, no target.
+long <- zb_long(activity, "commits")
+if (nrow(long) == 0L || sum(long$value, na.rm = TRUE) == 0) {
+  zb_out(zb_no_data(tr("github.commits.none")))
+} else {
+  plot <- ggplot(long, aes(x = date, y = value)) +
+    geom_line(linewidth = 0.5, colour = zb_palette[[8L]]) +
+    facet_wrap(~repo, ncol = 1, scales = "free_y") +
+    zb_scale_x_day() +
+    scale_y_continuous(limits = c(0, NA)) +
+    labs(x = tr("common.date"), y = tr("github.commits.axis_y")) +
+    zb_theme() +
+    theme(legend.position = "none")
+
+  zb_out(zb_fig(
+    plot,
+    alt = tr_f("github.commits.alt", date = zb_date(activity_date)),
+    caption = zb_chart_dateline(activity_date),
+    height = zb_facet_height(length(unique(long$repo)), per = 1.1, base = 1.4)
+  ))
+}
+```

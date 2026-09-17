@@ -1,0 +1,43 @@
+# =============================================================================
+# English profile -- OVERRIDE merged on top of `_quarto.yml` (SPEC.md ADR-4).
+# =============================================================================
+#
+#   quarto render site --profile en   ->  ../_site        (site root, "/")
+#
+# MUST be rendered BEFORE the `pt` profile: Quarto cleans its output
+# directory, and `_site/pt` lives inside `_site`, so rendering EN second
+# would delete the Portuguese build. The order is fixed in
+# .github/workflows/collect.yml.
+#
+# Every `text:` below is the `en` value of the matching `nav.*` key in
+# config/i18n.yml. Quarto's navbar is YAML and cannot call R, so these are
+# the only user-visible strings outside i18n.yml -- and
+# tests/testthat/test-i18n-parity.R asserts they stay identical to it.
+
+lang: en
+
+website:
+  title: "prod-monitor"
+  description: "Static, daily-updated dashboard of CRAN package health, GitHub development activity and academic output for a curated set of R packages and repositories."
+  navbar:
+    background: light
+    search: false
+    left:
+      - href: index.qmd
+        text: "Overview"
+      - href: cran.qmd
+        text: "CRAN"
+      - href: github.qmd
+        text: "GitHub"
+      - href: academic.qmd
+        text: "Academic"
+      - href: about.qmd
+        text: "About"
+    right:
+      - icon: github
+        href: https://github.com/evandeilton/prod-monitor
+        aria-label: "Source code"
+  page-footer:
+    border: true
+    left: "Code under the MIT licence · aggregated data under CC-BY-4.0"
+    right: "[Source code](https://github.com/evandeilton/prod-monitor)"

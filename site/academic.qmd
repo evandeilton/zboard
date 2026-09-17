@@ -1,0 +1,168 @@
+---
+title: "`r {source('_setup.R'); tr('academic.title')}`"
+---
+
+```{r}
+#| label: setup
+#| include: false
+## Academic (SPEC.md S7.1): publications, type, venue, year and accumulated
+## citations, as indexed by OpenAlex.
+##
+## Every figure on this page is a lower bound and says so: SPEC.md S10.5 is
+## linked from the totals and restated as a note beneath them.
+source("_setup.R")
+
+academic <- zb_json("academic")
+works <- zb_df(academic$works)
+by_year <- zb_df(academic$by_year)
+by_type <- zb_df(academic$by_type)
+totals <- academic$totals
+snapshot <- zb_get(academic, "snapshot_date")
+```
+
+```{r}
+#| label: header
+#| results: asis
+zb_out(zb_page_header("academic.html", snapshot))
+```
+
+`r tr("academic.lead")`
+
+```{r}
+#| label: totals
+#| results: asis
+zb_out(zb_kpis(list(
+  list(
+    label = tr("academic.totals.works"),
+    value = zb_int(zb_get(totals, "n_works", 0L))
+  ),
+  list(
+    label = tr("academic.totals.citations"),
+    value = zb_int(zb_get(totals, "citations", 0L)),
+    note = paste0("[", tr("common.see_limitations"), "](about.html#lim-5).")
+  )
+)))
+
+zb_out(zb_note(tr("academic.lag_note")))
+```
+
+## `r tr("academic.by_year.title")`
+
+```{r}
+#| label: by-year
+#| results: asis
+if (nrow(by_year) == 0L) {
+  zb_out(zb_no_data(tr("academic.by_year.none")))
+} else {
+  long <- rbind(
+    data.frame(
+      year = by_year$year, measure = tr("academic.col.works"),
+      value = by_year$n_works, stringsAsFactors = FALSE
+    ),
+    data.frame(
+      year = by_year$year, measure = tr("academic.col.citations"),
+      value = by_year$citations, stringsAsFactors = FALSE
+    )
+  )
+  long$measure <- factor(
+    long$measure,
+    levels = c(tr("academic.col.works"), tr("academic.col.citations"))
+  )
+
+  plot <- ggplot(long, aes(x = factor(year), y = value, fill = measure)) +
+    geom_col(position = position_dodge(width = 0.75), width = 0.7) +
+    geom_text(
+      aes(label = zb_int(value)),
+      position = position_dodge(width = 0.75),
+      vjust = -0.4, size = 3.2, colour = "#1f2328"
+    ) +
+    scale_fill_manual(values = zb_palette[c(1L, 2L)]) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    labs(x = tr("academic.col.year"), y = tr("academic.by_year.axis_y")) +
+    zb_theme()
+
+  zb_out(zb_fig(
+    plot,
+    alt = tr_f("academic.by_year.alt", date = zb_date(snapshot)),
+    caption = zb_chart_dateline(snapshot),
+    height = 3.4
+  ))
+
+  table <- data.frame(
+    year = as.character(by_year$year),
+    n_works = zb_int(by_year$n_works),
+    citations = zb_int(by_year$citations),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(tr("academic.col.year"), tr("academic.col.works"), tr("academic.col.citations")),
+    label = tr("academic.by_year.title"),
+    align = c("l", "r", "r"),
+    row_header = TRUE
+  ))
+}
+```
+
+## `r tr("academic.by_type.title")`
+
+```{r}
+#| label: by-type
+#| results: asis
+if (nrow(by_type) == 0L) {
+  zb_out(zb_no_data(tr("academic.by_type.none")))
+} else {
+  table <- data.frame(
+    type = paste0("<code>", zb_esc(by_type$type), "</code>"),
+    n_works = zb_int(by_type$n_works),
+    citations = zb_int(by_type$citations),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(tr("academic.col.type"), tr("academic.col.works"), tr("academic.col.citations")),
+    label = tr("academic.by_type.title"),
+    align = c("l", "r", "r"),
+    raw = "type"
+  ))
+  zb_out(zb_note(tr("academic.type_note")))
+}
+```
+
+## `r tr("academic.works.title")`
+
+```{r}
+#| label: works
+#| results: asis
+if (nrow(works) == 0L) {
+  zb_out(zb_no_data(tr("academic.works.none")))
+} else {
+  # The title links to the DOI where there is one, otherwise to the OpenAlex
+  # record. Both are values from the data, never a hand-written URL.
+  link <- ifelse(is.na(works$doi), works$work_id, works$doi)
+  title_cell <- ifelse(
+    is.na(link),
+    zb_esc(works$title),
+    paste0('<a href="', zb_esc_attr(link), '">', zb_esc(works$title), "</a>")
+  )
+  table <- data.frame(
+    title = title_cell,
+    type = paste0("<code>", zb_esc(works$type), "</code>"),
+    venue = ifelse(is.na(works$venue), tr("common.unknown"), works$venue),
+    year = ifelse(is.na(works$year), tr("common.unknown"), as.character(works$year)),
+    citations = zb_int(works$cited_by_count),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    table,
+    labels = c(
+      tr("academic.col.title"), tr("academic.col.type"),
+      tr("academic.col.venue"), tr("academic.col.year"),
+      tr("academic.col.citations")
+    ),
+    caption = tr_f("common.snapshot_date", date = zb_date(snapshot)),
+    align = c("l", "l", "l", "r", "r"),
+    raw = c("title", "type")
+  ))
+}
+```

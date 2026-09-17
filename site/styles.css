@@ -1,0 +1,407 @@
+/* ==========================================================================
+   prod-monitor dashboard styles
+
+   Deliberately small and hand-written: the whole front-end is static HTML
+   plus this one stylesheet, with no JavaScript of its own (SPEC.md NG-3,
+   NG-6).
+
+   Two rules govern every colour below (RNF-10):
+     1. Contrast. Body and label text sits at or above WCAG AA against its
+        own background; the darkest state colours are ~7:1 on their tint.
+     2. Colour is never the only channel. Every status tint is accompanied
+        by a symbol, a text label and a left border, so the state survives
+        greyscale printing and colour-vision deficiency alike.
+   ========================================================================== */
+
+:root {
+  --zb-ink: #1f2328;
+  --zb-ink-soft: #4a515b;
+  --zb-line: #d8dde3;
+  --zb-surface: #f7f8fa;
+
+  --zb-ok-ink: #0a5c34;
+  --zb-ok-bg: #e4f4ea;
+  --zb-note-ink: #5c4600;
+  --zb-note-bg: #fbf1d5;
+  --zb-warn-ink: #7a3c00;
+  --zb-warn-bg: #fceadb;
+  --zb-error-ink: #8a1420;
+  --zb-error-bg: #fbe6e8;
+  --zb-unknown-ink: #40474f;
+  --zb-unknown-bg: #eceef1;
+}
+
+/* -- screen-reader-only text ---------------------------------------------- */
+
+.zb-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* -- language switch (SPEC.md S7.3) --------------------------------------- */
+
+.zb-langbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  align-items: baseline;
+  padding: 0.5rem 0.85rem;
+  margin: 0 0 0.75rem 0;
+  border: 1px solid var(--zb-line);
+  border-left: 4px solid var(--zb-ink-soft);
+  border-radius: 4px;
+  background: var(--zb-surface);
+  font-size: 0.9rem;
+}
+
+.zb-langbar-current {
+  color: var(--zb-ink-soft);
+}
+
+.zb-langbar-link {
+  font-weight: 600;
+}
+
+/* -- dateline: data date first, build time clearly separate --------------- */
+
+.zb-dateline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1.25rem;
+  margin: 0 0 1.5rem 0;
+  font-size: 0.9rem;
+  color: var(--zb-ink-soft);
+}
+
+.zb-dateline-data {
+  color: var(--zb-ink);
+}
+
+/* -- headline figures ------------------------------------------------------ */
+
+.zb-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.85rem;
+  margin: 1rem 0 1.5rem 0;
+}
+
+.zb-kpi {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--zb-line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.zb-kpi-value {
+  margin: 0;
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--zb-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.zb-kpi-label {
+  margin: 0.3rem 0 0 0;
+  font-size: 0.9rem;
+  color: var(--zb-ink);
+}
+
+.zb-kpi-note {
+  margin: 0.45rem 0 0 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--zb-ink-soft);
+}
+
+/* -- package status cards -------------------------------------------------- */
+
+.zb-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.5rem 0;
+}
+
+.zb-card {
+  padding: 1rem 1.1rem 0.85rem 1.1rem;
+  border: 1px solid var(--zb-line);
+  border-left: 5px solid var(--zb-unknown-ink);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.zb-card-ok {
+  border-left-color: var(--zb-ok-ink);
+}
+.zb-card-note {
+  border-left-color: var(--zb-note-ink);
+}
+.zb-card-warn {
+  border-left-color: var(--zb-warn-ink);
+}
+.zb-card-error,
+.zb-card-fail {
+  border-left-color: var(--zb-error-ink);
+}
+
+.zb-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.zb-card-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.zb-card-sub,
+.zb-card-flag,
+.zb-card-repo {
+  margin: 0.35rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--zb-ink-soft);
+}
+
+.zb-card-flag {
+  font-weight: 700;
+  color: var(--zb-error-ink);
+  background: var(--zb-error-bg);
+  border-radius: 3px;
+  padding: 0.15rem 0.4rem;
+  display: inline-block;
+}
+
+.zb-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.6rem 0.9rem;
+  margin: 0.9rem 0 0 0;
+}
+
+.zb-fact dt {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--zb-ink-soft);
+}
+
+.zb-fact dd {
+  margin: 0.1rem 0 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--zb-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.zb-fact-extra {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--zb-ink-soft);
+}
+
+/* -- status chips: symbol + text, tint is decoration only ----------------- */
+
+.zb-status {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.zb-status-sym {
+  font-weight: 700;
+}
+
+.zb-status-ok,
+.zb-run-ok {
+  color: var(--zb-ok-ink);
+  background: var(--zb-ok-bg);
+}
+.zb-status-note {
+  color: var(--zb-note-ink);
+  background: var(--zb-note-bg);
+}
+.zb-status-warn,
+.zb-run-partial {
+  color: var(--zb-warn-ink);
+  background: var(--zb-warn-bg);
+}
+.zb-status-error,
+.zb-status-fail,
+.zb-run-failed {
+  color: var(--zb-error-ink);
+  background: var(--zb-error-bg);
+}
+.zb-status-unknown,
+.zb-run-unknown {
+  color: var(--zb-unknown-ink);
+  background: var(--zb-unknown-bg);
+}
+
+/* -- tables ---------------------------------------------------------------- */
+
+.zb-table-wrap {
+  overflow-x: auto;
+  margin: 0.75rem 0 1.25rem 0;
+  border: 1px solid var(--zb-line);
+  border-radius: 6px;
+}
+
+.zb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.zb-table caption {
+  caption-side: top;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--zb-ink);
+  background: var(--zb-surface);
+  border-bottom: 1px solid var(--zb-line);
+}
+
+.zb-table th,
+.zb-table td {
+  padding: 0.45rem 0.8rem;
+  border-bottom: 1px solid #eceef1;
+  vertical-align: top;
+}
+
+.zb-table thead th {
+  background: #fff;
+  border-bottom: 2px solid var(--zb-line);
+  font-weight: 700;
+  color: var(--zb-ink);
+  white-space: nowrap;
+}
+
+.zb-table tbody tr:nth-child(even) {
+  background: #fbfcfd;
+}
+
+.zb-table tbody th[scope="row"] {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.zb-table td.zb-r,
+.zb-table th.zb-r {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.zb-table td.zb-c,
+.zb-table th.zb-c {
+  text-align: center;
+}
+
+/* -- figures --------------------------------------------------------------- */
+
+.zb-figure {
+  margin: 1rem 0 0.5rem 0;
+}
+
+.zb-figure img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.zb-figure figcaption {
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--zb-ink-soft);
+}
+
+/* -- notes and empty states ------------------------------------------------ */
+
+.zb-note {
+  margin: 0.5rem 0 1rem 0;
+  padding: 0.5rem 0.8rem;
+  border-left: 4px solid var(--zb-ink-soft);
+  background: var(--zb-surface);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--zb-ink);
+}
+
+.zb-note-sample {
+  border-left-color: var(--zb-note-ink);
+  background: var(--zb-note-bg);
+  color: var(--zb-note-ink);
+  font-weight: 500;
+}
+
+.zb-note-sample a {
+  color: var(--zb-note-ink);
+  text-decoration: underline;
+}
+
+.zb-note-mark {
+  font-weight: 700;
+  margin-right: 0.15rem;
+}
+
+.zb-empty {
+  margin: 0.75rem 0 1.25rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px dashed var(--zb-line);
+  border-radius: 6px;
+  background: var(--zb-surface);
+  color: var(--zb-ink-soft);
+  font-size: 0.9rem;
+}
+
+/* -- the declared limitations (SPEC.md S10) -------------------------------- */
+
+.zb-limits {
+  border-left: 4px solid var(--zb-ink-soft);
+  padding-left: 1rem;
+}
+
+/* -- misc ------------------------------------------------------------------ */
+
+.zb-inline-list {
+  margin: 0.5rem 0 1.25rem 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+}
+
+.zb-inline-list li {
+  margin-bottom: 0.2rem;
+}
+
+@media print {
+  .zb-langbar {
+    display: none;
+  }
+  .zb-table-wrap {
+    overflow-x: visible;
+  }
+}

@@ -1,0 +1,48 @@
+Package: zboard
+Title: Public Production Monitoring for Curated R Packages and Repositories
+Version: 0.0.0.9000
+Authors@R:
+    person("José Evandeilton", "Lopes", , "evandeilton@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0007-5887-4084"))
+Description: Collects, consolidates and publishes a static, daily-updated
+    dashboard ("dashboard do Zé") consolidating CRAN check/download health,
+    GitHub development activity and academic output for a curated set of R
+    packages and repositories. Designed to run unattended from GitHub
+    Actions with no backend: Parquet is the canonical data store (orphan
+    'data' branch), JSON is derived at build time for a bilingual Quarto
+    dashboard published to GitHub Pages. See SPEC.md at the repository
+    root for the full, normative specification and site/about.qmd for
+    declared methodological limitations.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Imports:
+    arrow,
+    cli,
+    dplyr,
+    glue,
+    gh,
+    httr2,
+    jsonlite,
+    lubridate,
+    purrr,
+    rlang,
+    stringr,
+    tibble,
+    tidyr,
+    tools,
+    utils,
+    yaml
+Suggests:
+    cranlogs,
+    ggplot2,
+    htmltools,
+    knitr,
+    ragg,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
+URL: https://github.com/evandeilton/prod-monitor, https://evandeilton.github.io/prod-monitor/
+BugReports: https://github.com/evandeilton/prod-monitor/issues
+Config/roxygen2/version: 8.1.0

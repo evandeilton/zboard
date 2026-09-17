@@ -1,0 +1,175 @@
+---
+title: "`r {source('_setup.R'); tr('about.title')}`"
+---
+
+```{r}
+#| label: setup
+#| include: false
+## About (SPEC.md S7.1): methodology, the declared limitations of S10, the
+## licence and a link to the source.
+##
+## The five limitation items are NORMATIVE. SPEC.md S10 requires them
+## published in full and in both languages; they are emitted as Markdown so
+## that inline code and em dashes survive, under explicit,
+## language-independent anchors `#lim-1` .. `#lim-5`. Those anchors are the
+## one-click target S7.2 demands from every download figure, so they must not
+## be renamed.
+source("_setup.R")
+
+meta <- zb_json("meta")
+limit_ids <- as.character(1:5)
+source_ids <- c("downloads", "versions", "checks", "archive", "activity", "traffic", "academic")
+```
+
+```{r}
+#| label: header
+#| results: asis
+zb_out(zb_page_header("about.html", zb_get(meta, "latest_data_date")))
+```
+
+`r tr("about.lead")`
+
+## `r tr("about.purpose.title")`
+
+`r tr("about.purpose.body")`
+
+## `r tr("about.method.title")`
+
+`r tr("about.method.body")`
+
+`r tr("about.method.curation")`
+
+`r tr("about.method.retention")`
+
+`r tr("about.method.privacy")`
+
+### `r tr("about.sources.title")`
+
+```{r}
+#| label: sources
+#| results: asis
+table <- data.frame(
+  name = vapply(source_ids, function(id) tr(paste0("about.src.", id, ".name")), character(1)),
+  endpoint = vapply(
+    source_ids,
+    function(id) zb_md_inline(tr(paste0("about.src.", id, ".endpoint"))),
+    character(1)
+  ),
+  auth = vapply(source_ids, function(id) tr(paste0("about.src.", id, ".auth")), character(1)),
+  retro = vapply(source_ids, function(id) tr(paste0("about.src.", id, ".retro")), character(1)),
+  limit = vapply(source_ids, function(id) tr(paste0("about.src.", id, ".limit")), character(1)),
+  stringsAsFactors = FALSE
+)
+zb_out(zb_table(
+  table,
+  labels = c(
+    tr("about.sources.col.source"), tr("about.sources.col.endpoint"),
+    tr("about.sources.col.auth"), tr("about.sources.col.retro"),
+    tr("about.sources.col.limit")
+  ),
+  label = tr("about.sources.title"),
+  align = c("l", "l", "l", "l", "l"),
+  raw = "endpoint",
+  row_header = TRUE
+))
+```
+
+## `r tr("about.limits.title")` {#limitations}
+
+`r tr("about.limits.lead")`
+
+```{r}
+#| label: limitations
+#| results: asis
+# Emitted as Markdown, not as an HTML block: these paragraphs carry inline
+# code and em dashes that Pandoc must render. The explicit `{#lim-N}` anchors
+# are identical in both languages, so a link from a chart on either site
+# lands on the same item.
+for (id in limit_ids) {
+  cat(
+    "\n### ", id, ". ", tr(paste0("about.limit.", id, ".title")),
+    " {#lim-", id, "}\n\n",
+    tr(paste0("about.limit.", id, ".body")), "\n\n",
+    sep = ""
+  )
+}
+```
+
+## `r tr("about.nongoals.title")`
+
+`r tr("about.nongoals.modelling")`
+
+`r tr("about.nongoals.commits")`
+
+`r tr("about.nongoals.thirdparty")`
+
+## `r tr("about.license.title")`
+
+`r tr("about.license.body")`
+
+## `r tr("about.source.title")`
+
+`r tr("about.source.body")`
+
+- [`r tr("about.source.link_label")`](https://github.com/evandeilton/prod-monitor)
+- [`r tr("about.source.issues_label")`](https://github.com/evandeilton/prod-monitor/issues)
+
+`r tr("about.source.issues_body")`
+
+## `r tr("about.build.title")`
+
+```{r}
+#| label: build
+#| results: asis
+build <- data.frame(
+  field = c(
+    tr("about.build.generated"), tr("about.build.latest"),
+    tr("about.build.schema"), tr("about.build.package"),
+    tr("about.build.retention")
+  ),
+  value = c(
+    zb_datetime(zb_get(meta, "generated_at")),
+    zb_date(zb_get(meta, "latest_data_date")),
+    zb_int(zb_get(meta, "schema_version")),
+    as.character(zb_get(meta, "package_version", tr("common.unknown"))),
+    zb_int(zb_get(meta, "retention_months"))
+  ),
+  stringsAsFactors = FALSE
+)
+zb_out(zb_table(
+  build,
+  labels = c(tr("about.build.col.field"), tr("about.build.col.value")),
+  label = tr("about.build.title"),
+  align = c("l", "l"),
+  row_header = TRUE
+))
+
+counts <- meta$row_counts
+latest <- meta$latest_data_date_by_table
+if (length(counts)) {
+  tables <- names(counts)
+  rows <- data.frame(
+    table = paste0("<code>", zb_esc(tables), "</code>"),
+    rows = zb_int(unlist(counts[tables], use.names = FALSE)),
+    latest = zb_date(vapply(
+      tables,
+      function(nm) {
+        value <- latest[[nm]]
+        if (is.null(value) || length(value) == 0L) NA_character_ else as.character(value)
+      },
+      character(1)
+    )),
+    stringsAsFactors = FALSE
+  )
+  zb_out(zb_table(
+    rows,
+    labels = c(
+      tr("about.build.col.table"), tr("about.build.col.rows"),
+      tr("about.build.col.latest")
+    ),
+    caption = tr("about.build.rows.title"),
+    align = c("l", "r", "l"),
+    raw = "table"
+  ))
+}
+```

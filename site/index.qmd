@@ -5,10 +5,10 @@ title: "`r {source('_setup.R'); tr('overview.title')}`"
 ```{r}
 #| label: setup
 #| include: false
-## Overview (SPEC.md S7.1): status cards per package, the recent download
+## Overview: status cards per package, the recent download
 ## sample, open issues, the last release and the per-source freshness light.
 ##
-## NG-2 is load-bearing on this page: there is no commit count anywhere on
+## Commits are never a headline figure: there is no commit count anywhere on
 ## it, and `overview.no_commits_note` says so out loud, so the omission reads
 ## as a decision rather than an oversight.
 ##
@@ -54,7 +54,7 @@ zb_out(zb_kpis(list(
   list(
     label = tr("overview.totals.downloads"),
     value = zb_int(zb_get(totals, "downloads_30d", 0L)),
-    # SPEC.md S7.2: the mandatory label, and a one-click path to S10.1.
+    # The mandatory download label, and a one-click path to the limitation it cites.
     note = paste0(
       "**", tr("downloads.label"), "**. [",
       tr("downloads.limitation_link"), "](about.html#lim-1)."

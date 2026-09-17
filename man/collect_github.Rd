@@ -21,8 +21,7 @@ collect_github(
 defaults to today; the current UTC day is partial and is corrected by
 the next run under last-write-wins.}
 
-\item{config_path}{Path to the curated source configuration
-(SPEC.md S5).}
+\item{config_path}{Path to the curated source configuration.}
 
 \item{staging_dir}{Directory the staging Parquet files are written to.
 Created when missing.}
@@ -35,7 +34,7 @@ source attempted. The same rows are written to
 \code{staging_dir/run_manifest_github.parquet}.
 }
 \description{
-Collects the four GitHub-side tables of SPEC.md S4.2 for the
+Collects the four GitHub-side tables for the
 repositories curated in \code{config/repos.yml}, writing each as a Parquet
 file in \code{staging_dir} for \code{\link[=consolidate]{consolidate()}}:
 \itemize{
@@ -49,27 +48,27 @@ requests, age of the oldest open issue, last push, archived flag.
 
 Repositories are collected independently of each other and the four
 tables independently of each other, so one 404 or one missing scope
-degrades a single cell of the dashboard rather than the run (RNF-3).
+degrades a single cell of the dashboard rather than the run.
 }
 \details{
 \strong{Authentication.} Delegated to the \code{gh} package, which picks up
 \code{GITHUB_TOKEN} (or \code{GITHUB_PAT}) from the environment; no token is
 accepted as an argument and none is ever logged. Traffic additionally
-requires the \code{Administration: read} scope of the fine-grained PAT
-(SPEC.md S11); without it the traffic table alone is recorded as failed.
+requires the \code{Administration: read} scope of the fine-grained PAT;
+without it the traffic table alone is recorded as failed.
 
 \strong{Traffic is not retroactive.} The GitHub API keeps 14 days and nothing
 more, which is why the monthly rollup in \code{\link[=consolidate]{consolidate()}} is the only
-long-term copy (SPEC.md S4.3). Passing \code{from}/\code{to} therefore has no
-effect on \code{gh_traffic}: the window is ignored for that table with a
-message, and the collector continues rather than failing (SPEC.md S6,
-"Backfill ... Não aplicável a \code{gh_traffic}").
+long-term copy. Passing \code{from}/\code{to} therefore has no effect on
+\code{gh_traffic}: the window is ignored for that table with a message, and
+the collector continues rather than failing. Backfill is not applicable
+to \code{gh_traffic}.
 
 \code{gh_repo_snapshot} and \code{gh_releases} are likewise snapshots, so
 \code{from}/\code{to} apply only to \code{gh_activity}.
 
 Only aggregates per repository are collected. No contributor profile,
-issue author or e-mail address is ever read or stored (NG-5).
+issue author or e-mail address is ever read or stored.
 }
 \examples{
 \dontrun{

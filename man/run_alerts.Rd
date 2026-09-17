@@ -32,7 +32,7 @@ Invisibly, a tibble with one row per action and the columns
 }
 \description{
 Reconciles the repository's open \code{alert} issues against the latest CRAN
-snapshot in \code{data_dir}, following SPEC.md S8 exactly:
+snapshot in \code{data_dir}:
 \itemize{
 \item \code{worst_status} in \code{WARN}/\code{ERROR}/\code{FAIL} opens
 \verb{[CRAN] \{pkg\}: \{status\} em \{n\} flavor(s)}, high severity. While the
@@ -53,8 +53,8 @@ never opened for a condition that is already tracked.
 \strong{Dry run.} When \code{token} is \code{""} -- no PAT in the environment, a fork,
 a local run -- nothing is sent to the API. The plan is printed and the
 function returns invisibly without error, so a workflow without
-\code{issues: write} does not fail (SPEC.md S11 restricts that permission to
-the \code{alert} job).
+\code{issues: write} does not fail (that permission is restricted to the
+\code{alert} job).
 
 The token is never printed and never written anywhere.
 }

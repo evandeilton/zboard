@@ -1,12 +1,8 @@
-# Curated sources for zboard.
+# What zboard monitors.
 #
-# Repositories/packages NOT listed here are not collected, aggregated, or
-# displayed. Curation is an explicit editorial decision, not a display
-# filter (SPEC.md NG-5, S5).
-#
-# PENDING (SPEC.md S15, P-1): this is the spec's proposed default list,
-# marked "a confirmar pelo autor". Edit and confirm before the first
-# production run — nothing downstream depends on these exact values.
+# Packages and repositories NOT listed here are not collected, aggregated
+# or displayed at all: this list is an editorial choice, not a display
+# filter. Nothing downstream depends on these exact values.
 
 cran_packages:
   - gkwreg

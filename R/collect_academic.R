@@ -1,13 +1,13 @@
 # ---------------------------------------------------------------------------
-# Academic collector (SPEC.md S5, last row of the source table).
+# Academic collector: publications, preprints, datasets and software.
 #
 # Writes staging/academic_works.parquet from OpenAlex:
 #   api.openalex.org/works?filter=author.orcid:{orcid}
 #
 # No authentication. OpenAlex asks for a contact address to place the caller
-# in its "polite pool"; that address is a repository secret (OPENALEX_MAILTO,
-# SPEC.md S11) read from the environment as a default argument value and
-# never written to a file or logged.
+# in its "polite pool"; that address is a repository secret
+# (OPENALEX_MAILTO) read from the environment as a default argument value
+# and never written to a file or logged.
 # ---------------------------------------------------------------------------
 
 #' Extract the publication venue from an OpenAlex work
@@ -103,7 +103,7 @@ zb_build_academic_works <- function(works, snapshot_date) {
 #' Collect academic output from OpenAlex
 #'
 #' @description
-#' Collects the `academic_works` snapshot of SPEC.md S4.2 -- publications,
+#' Collects the `academic_works` snapshot -- publications,
 #' preprints, datasets and software attributed to the ORCID iD configured in
 #' `config/repos.yml`, with their venue, year, type and accumulated citation
 #' count -- and writes it as `staging_dir/academic_works.parquet` for
@@ -112,7 +112,7 @@ zb_build_academic_works <- function(works, snapshot_date) {
 #' @details
 #' **Polite pool.** OpenAlex serves anonymous callers from a slower, shared
 #' pool. Supplying a contact address moves the caller to the polite pool.
-#' The address is a repository secret (SPEC.md S11): it is read from
+#' The address is a repository secret: it is read from
 #' `OPENALEX_MAILTO` as the default of the `mailto` argument, is never
 #' hard-coded, and is never written to any output file. When the variable is
 #' unset the collector still runs, unauthenticated, and says so.
@@ -125,18 +125,17 @@ zb_build_academic_works <- function(works, snapshot_date) {
 #' collects the whole body of work in every run.
 #'
 #' **Type values.** `type` is stored exactly as OpenAlex reports it
-#' (`article`, `preprint`, `dataset`, `book-chapter`, ...). SPEC.md S4.2
-#' lists four illustrative values; normalising to that closed set would
+#' (`article`, `preprint`, `dataset`, `book-chapter`, ...). The column is
+#' deliberately not normalised onto a closed set of values; doing so would
 #' discard information the dashboard can display verbatim.
 #'
 #' Only the author's own works are collected. No co-author name, identifier
-#' or affiliation is stored (NG-5).
+#' or affiliation is stored.
 #'
 #' @param from Optional lower bound on publication date, as an ISO-8601 date
 #'   string or a `Date`. `NULL` (the default) applies no lower bound.
 #' @param to Optional upper bound on publication date, same forms as `from`.
-#' @param config_path Path to the curated source configuration
-#'   (SPEC.md S5).
+#' @param config_path Path to the curated source configuration.
 #' @param staging_dir Directory the staging Parquet file is written to.
 #'   Created when missing.
 #' @param mailto Contact address for the OpenAlex polite pool. Defaults to

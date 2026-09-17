@@ -13,7 +13,7 @@
 # * Every file is a JSON **object** at the top level, never a bare array.
 # * Every file carries `generated_at` : string, ISO-8601 UTC with a `Z`
 #   suffix ("2026-09-17T06:21:33Z"). That is the BUILD time. For the
-#   "date of the most recent datum" required by SPEC.md S7.2, use
+#   "date of the most recent datum" the dashboard displays, use
 #   `meta.json -> latest_data_date` (or the per-table variant), never
 #   `generated_at`.
 # * Dates are strings, "YYYY-MM-DD". Timestamps are strings,
@@ -31,7 +31,7 @@
 #   `redact_emails` argument). `maintainer` is a display name only.
 #
 # ---------------------------------------------------------------------------
-# 1. overview.json  --  the Overview page (SPEC.md S7.1)
+# 1. overview.json  --  the Overview page
 # ---------------------------------------------------------------------------
 # {
 #   "generated_at": "2026-09-17T06:21:33Z",
@@ -103,16 +103,16 @@
 #       "total": 4821,                         // over the exported window
 #       "points": [ { "date": "2026-09-01", "downloads": 23 } ] }
 #   ],
-#   "releases": [   // vertical markers; SPEC.md S7.1 and S10.3
+#   "releases": [   // vertical markers on the download chart
 #     { "package": "gkwreg", "version": "2.1.18", "date": "2026-08-24" }
 #   ],
 #   "monthly": [    // permanent rollup, outlives the 12-month daily window
 #     { "package": "gkwreg", "month": "2026-08", "downloads": 900 }
 #   ]
 # }
-# The series is a partial sample of one mirror. SPEC.md S7.2 requires the
-# label "downloads from the Posit mirror (partial sample)" on every chart
-# built from this file, and a one-click path to the S10 limitations.
+# The series is a partial sample of one mirror. Every chart built from this
+# file must carry the label "downloads from the Posit mirror (partial
+# sample)" and a one-click path to the declared limitations.
 #
 # ---------------------------------------------------------------------------
 # 4. gh_activity.json  --  the GitHub activity chart
@@ -132,7 +132,7 @@
 #   ]
 # }
 # `prs_merged` and `prs_closed` are DISJOINT: a merged PR counts only in
-# `prs_merged`. Commits must not be shown as a headline KPI (NG-2): they are
+# `prs_merged`. Commits must not be shown as a headline KPI: they are
 # a secondary series on the GitHub page only.
 #
 # ---------------------------------------------------------------------------
@@ -152,9 +152,9 @@
 #   ]
 # }
 # `series_start_date` is the earliest day known for that repo, daily rows and
-# monthly archive combined. SPEC.md S10.4 requires the chart to say
-# "collection started on <series_start_date>": everything before it is
-# unrecoverable by design of the GitHub API (14-day retention).
+# monthly archive combined. The chart must say "collection started on
+# <series_start_date>": everything before it is unrecoverable by design of
+# the GitHub API (14-day retention).
 # In `monthly`, the `*_uniques` columns are SUMS of daily uniques, i.e. an
 # upper bound on distinct visitors, not a distinct count. Label them as such.
 #
@@ -174,7 +174,7 @@
 #       "open_prs": 0, "oldest_open_issue_days": 311, "stars": 2 }
 #   ]
 # }
-# Aggregates per repository only. No issue title, author or e-mail (NG-5).
+# Aggregates per repository only. No issue title, author or e-mail.
 #
 # ---------------------------------------------------------------------------
 # 7. gh_releases.json  --  release markers and the release table
@@ -207,10 +207,10 @@
 #   "totals": { "n_works": 9, "citations": 12 }
 # }
 # `type` is OpenAlex's own vocabulary, passed through unchanged.
-# Citation counts lag indexing by weeks to months (SPEC.md S10.5).
+# Citation counts lag indexing by weeks to months.
 #
 # ---------------------------------------------------------------------------
-# 9. freshness.json  --  the per-source traffic light (SPEC.md S7.1)
+# 9. freshness.json  --  the per-source traffic light
 # ---------------------------------------------------------------------------
 # {
 #   "generated_at": "...",
@@ -223,7 +223,7 @@
 # }
 # `source` takes a table name ("cran_downloads", "gh_traffic", ...) or the
 # literal "consolidate". `message` is sanitised and capped at 500 chars; it
-# never contains a token or an e-mail address (SPEC.md S11).
+# never contains a token or an e-mail address.
 #
 # ---------------------------------------------------------------------------
 # 10. meta.json  --  build metadata
@@ -362,8 +362,7 @@ zb_read_monthly <- function(archive_dir, tbl) {
 #' An absent Parquet file is an empty table, not an error, and every array
 #' in the output is emitted even when empty. Calling this on a directory
 #' with no data at all produces ten valid, empty-but-well-formed JSON files,
-#' which is what lets the site build before the first collection has run
-#' (RNF-3).
+#' which is what lets the site build before the first collection has run.
 #'
 #' Dates and timestamps are serialised as ISO-8601 strings; no Arrow or R
 #' date type reaches the JSON. Numbers are written at full precision
@@ -371,7 +370,7 @@ zb_read_monthly <- function(archive_dir, tbl) {
 #'
 #' `cran_status$maintainer` is collected from CRAN with an e-mail address
 #' attached. Because these files are published on a public site, the address
-#' is removed by default, leaving the display name (SPEC.md S11, NG-5).
+#' is removed by default, leaving the display name.
 #'
 #' @param data_dir Directory holding the canonical Parquet store.
 #' @param output_dir Directory the JSON files are written to. Created when
@@ -379,7 +378,7 @@ zb_read_monthly <- function(archive_dir, tbl) {
 #' @param archive_dir Directory holding the monthly rollups. Defaults to
 #'   `archive/` inside `data_dir`.
 #' @param downloads_window_days Length, in days, of the daily download and
-#'   activity series exported (the rolling window of SPEC.md S4.3).
+#'   activity series exported (the rolling daily window).
 #' @param redact_emails Strip e-mail addresses from `maintainer` before
 #'   publishing. Leave `TRUE` unless you have a specific reason not to.
 #' @param pretty Pretty-print the JSON. `FALSE` produces smaller files.

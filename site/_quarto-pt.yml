@@ -1,5 +1,5 @@
 # =============================================================================
-# Perfil português -- OVERRIDE aplicado sobre `_quarto.yml` (SPEC.md ADR-4).
+# Perfil português -- OVERRIDE aplicado sobre `_quarto.yml`.
 # =============================================================================
 #
 #   quarto render site --profile pt   ->  ../_site/pt     (subdiretório "/pt/")

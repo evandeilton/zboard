@@ -22,8 +22,7 @@ one day so that the series self-heals after an outage.}
 defaults to yesterday, because the current UTC day is still incomplete
 upstream.}
 
-\item{config_path}{Path to the curated source configuration
-(SPEC.md S5).}
+\item{config_path}{Path to the curated source configuration.}
 
 \item{staging_dir}{Directory the staging Parquet files are written to.
 Created when missing.}
@@ -37,7 +36,7 @@ source attempted, with \code{status} in \code{ok}/\code{partial}/\code{failed},
 are written to \code{staging_dir/run_manifest_cran.parquet}.
 }
 \description{
-Collects the four CRAN-side tables of SPEC.md S4.2 for the packages
+Collects the four CRAN-side tables for the packages
 curated in \code{config/repos.yml}, and writes each one as a Parquet file in
 \code{staging_dir} for \code{\link[=consolidate]{consolidate()}} to upsert:
 \itemize{
@@ -53,8 +52,8 @@ worst check status across flavours.
 
 Each of the four is collected independently: a failure in one is
 recorded in the run manifest and does not prevent the others from being
-written (RNF-3). Every network call retries three times with exponential
-backoff on 5xx/timeout and honours \code{Retry-After} on 429 (RNF-7).
+written. Every network call retries three times with exponential
+backoff on 5xx/timeout and honours \code{Retry-After} on 429.
 }
 \details{
 Only \code{cran_downloads} is retroactive. \code{cran_checks} and \code{cran_status} are

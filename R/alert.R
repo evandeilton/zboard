@@ -1,8 +1,8 @@
 # ---------------------------------------------------------------------------
-# Alerts (SPEC.md S8).
+# Alerts: CRAN check failures and archival, raised as issues.
 #
 # One channel: an issue in the monitoring repository itself, labelled
-# `alert`. Two triggers and nothing else -- S8's anti-fatigue clause is a
+# `alert`. Two triggers and nothing else -- the anti-fatigue rule is a
 # requirement, not a suggestion: "an alert that fires every week stops being
 # read, and the day CRAN actually breaks, it goes unnoticed."
 #
@@ -22,7 +22,7 @@
 #'
 #' @param kind `"cran-check"` or `"archived"`.
 #' @param package Package name.
-#' @param prefix Marker namespace; the repository slug of SPEC.md S8.
+#' @param prefix Marker namespace; the repository slug.
 #' @return A length-1 character vector, e.g.
 #'   `"<!-- zboard:cran-check:gkwreg -->"`.
 #' @keywords internal
@@ -217,7 +217,7 @@ zb_ensure_label <- function(repo, token, label = "alert") {
 #'
 #' @description
 #' Reconciles the repository's open `alert` issues against the latest CRAN
-#' snapshot in `data_dir`, following SPEC.md S8 exactly:
+#' snapshot in `data_dir`:
 #'
 #' * `worst_status` in `WARN`/`ERROR`/`FAIL` opens
 #'   `[CRAN] {pkg}: {status} em {n} flavor(s)`, high severity. While the
@@ -237,8 +237,8 @@ zb_ensure_label <- function(repo, token, label = "alert") {
 #' **Dry run.** When `token` is `""` -- no PAT in the environment, a fork,
 #' a local run -- nothing is sent to the API. The plan is printed and the
 #' function returns invisibly without error, so a workflow without
-#' `issues: write` does not fail (SPEC.md S11 restricts that permission to
-#' the `alert` job).
+#' `issues: write` does not fail (that permission is restricted to the
+#' `alert` job).
 #'
 #' The token is never printed and never written anywhere.
 #'
@@ -367,7 +367,7 @@ run_alerts <- function(repo = Sys.getenv("GITHUB_REPOSITORY"),
 
   # -- close resolved check alerts ----------------------------------------
   # Only `cran-check` markers are eligible. An `archived` alert stays open
-  # until a human closes it (SPEC.md S8, critical severity).
+  # until a human closes it (critical severity).
   check_prefix <- paste0("<!-- ", marker_prefix, ":cran-check:")
   stale <- open[
     !is.na(open$marker) &

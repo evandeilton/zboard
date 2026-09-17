@@ -1,5 +1,5 @@
 # =============================================================================
-# i18n for the Quarto dashboard (SPEC.md S7.3)
+# i18n for the Quarto dashboard
 # =============================================================================
 #
 # Files whose name starts with "_" are not project inputs, so this is sourced
@@ -80,7 +80,7 @@ zb_i18n <- function() {
 #'
 #' Anything other than a known profile falls back to English rather than
 #' failing the build: an unlocalised page is a better failure mode than no
-#' page at all (RNF-3).
+#' page at all.
 zb_lang <- function(known = c("en", "pt")) {
   profile <- trimws(unlist(strsplit(Sys.getenv("QUARTO_PROFILE", ""), ",")))
   profile <- profile[nzchar(profile) & profile %in% known]

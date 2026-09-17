@@ -1,5 +1,5 @@
 # =============================================================================
-# i18n.yml -- every literal string the dashboard prints (SPEC.md S7.3)
+# i18n.yml -- every literal string the dashboard prints
 # =============================================================================
 #
 # Contract
@@ -18,10 +18,10 @@
 #
 # Normative content
 # -----------------
-# `about.limit.N.*` reproduces SPEC.md S10 in full. That text is normative:
-# it must be published complete, in both languages. Do not summarise it.
-# `downloads.label` is the mandatory download label of SPEC.md S7.2; it must
-# never be replaced by anything resembling "total downloads".
+# `about.limit.N.*` are the dashboard's declared methodological limitations.
+# They must be published complete, in both languages. Do not summarise them.
+# `downloads.label` is the mandatory download label; it must never be
+# replaced by anything resembling "total downloads".
 # =============================================================================
 
 # -- site chrome --------------------------------------------------------------
@@ -58,7 +58,7 @@ footer.license:
   en: "Code under the MIT licence · aggregated data under CC-BY-4.0"
   pt: "Código sob licença MIT · dados agregados sob CC-BY-4.0"
 
-# -- language switch (SPEC.md S7.3: static link, preserving the page path) -----
+# -- language switch (static link, preserving the page path) -------------------
 lang.name.en:
   en: "English"
   pt: "English"
@@ -160,7 +160,7 @@ common.aria_status_prefix:
   en: "check status"
   pt: "status de check"
 
-# -- CRAN check status: never colour alone (SPEC.md S7.2, RNF-10) -------------
+# -- CRAN check status: never colour alone ------------------------------------
 status.label.ok:
   en: "OK"
   pt: "OK"
@@ -198,13 +198,13 @@ status.desc.unknown:
   en: "no check result available"
   pt: "sem resultado de check disponível"
 
-# -- freshness / run_manifest (SPEC.md S7.1) ----------------------------------
+# -- freshness / run_manifest ----------------------------------
 freshness.title:
   en: "Source freshness"
   pt: "Frescor das fontes"
 freshness.lead:
-  en: "Last recorded run of each collector. A stale or failed source degrades that section of the dashboard without blocking the rest (RNF-3)."
-  pt: "Última execução registrada de cada coletor. Uma fonte defasada ou com falha degrada apenas a sua seção do painel, sem bloquear as demais (RNF-3)."
+  en: "Last recorded run of each collector. A stale or failed source degrades that section of the dashboard without blocking the rest."
+  pt: "Última execução registrada de cada coletor. Uma fonte defasada ou com falha degrada apenas a sua seção do painel, sem bloquear as demais."
 freshness.col.source:
   en: "Source"
   pt: "Fonte"
@@ -242,7 +242,7 @@ freshness.none:
   en: "No pipeline run has been recorded yet."
   pt: "Nenhuma execução do pipeline foi registrada ainda."
 
-# -- downloads: the mandatory wording of SPEC.md S7.2 -------------------------
+# -- downloads: the mandatory wording ------------------------------------------
 downloads.label:
   en: "downloads from the Posit mirror (partial sample)"
   pt: "downloads do mirror da Posit (amostra parcial)"
@@ -339,8 +339,8 @@ overview.card.off_index:
   en: "OUTSIDE the active CRAN index"
   pt: "FORA do índice ativo do CRAN"
 overview.no_commits_note:
-  en: "Commit counts appear nowhere on this page, by design. Raw commit volume measures typing, not production, and a headline built on it invites Goodhart's law (SPEC.md NG-2). Commits are published only as a secondary series on the GitHub page."
-  pt: "Contagens de commits não aparecem em nenhum ponto desta página, por decisão de projeto. Volume bruto de commits mede digitação, não produção, e um destaque construído sobre ele convida à lei de Goodhart (SPEC.md NG-2). Commits são publicados apenas como série secundária na página GitHub."
+  en: "Commit counts appear nowhere on this page, by design. Raw commit volume measures typing, not production, and a headline built on it invites Goodhart's law. Commits are published only as a secondary series on the GitHub page."
+  pt: "Contagens de commits não aparecem em nenhum ponto desta página, por decisão de projeto. Volume bruto de commits mede digitação, não produção, e um destaque construído sobre ele convida à lei de Goodhart. Commits são publicados apenas como série secundária na página GitHub."
 
 # -- CRAN page ----------------------------------------------------------------
 cran.title:
@@ -359,8 +359,8 @@ cran.checks.title:
   en: "Check status by package and flavour"
   pt: "Status de check por pacote e flavor"
 cran.checks.lead:
-  en: "One column per CRAN check flavour, latest snapshot only. Status is given as text, never by colour alone (RNF-10)."
-  pt: "Uma coluna por flavor de check do CRAN, apenas o snapshot mais recente. O status é dado por texto, nunca apenas por cor (RNF-10)."
+  en: "One column per CRAN check flavour, latest snapshot only. Status is given as text, never by colour alone."
+  pt: "Uma coluna por flavor de check do CRAN, apenas o snapshot mais recente. O status é dado por texto, nunca apenas por cor."
 cran.checks.none:
   en: "No check result has been collected yet."
   pt: "Nenhum resultado de check foi coletado ainda."
@@ -425,8 +425,8 @@ cran.monthly.title:
   en: "Permanent monthly archive"
   pt: "Arquivo mensal permanente"
 cran.monthly.lead:
-  en: "Monthly rollup, kept indefinitely. The daily series above is pruned to a rolling 12-month window (SPEC.md S4.3)."
-  pt: "Rollup mensal, mantido indefinidamente. A série diária acima é podada para uma janela móvel de 12 meses (SPEC.md S4.3)."
+  en: "Monthly rollup, kept indefinitely. The daily series above is pruned to a rolling 12-month window."
+  pt: "Rollup mensal, mantido indefinidamente. A série diária acima é podada para uma janela móvel de 12 meses."
 cran.monthly.none:
   en: "No month has been rolled up yet."
   pt: "Nenhum mês foi consolidado ainda."
@@ -580,8 +580,8 @@ github.commits.title:
   en: "Commits, secondary series"
   pt: "Commits, série secundária"
 github.commits.lead:
-  en: "Published here and nowhere else, deliberately. Raw commit volume is subject to Goodhart's law: it measures typing, not production. It is shown as one series among others, never as a headline figure, and the dashboard sets no target and tracks no streak (SPEC.md NG-2)."
-  pt: "Publicado aqui e em nenhum outro lugar, deliberadamente. O volume bruto de commits está sujeito à lei de Goodhart: mede digitação, não produção. Aparece como uma série entre outras, nunca como número de destaque, e o painel não define meta nem acompanha sequência (SPEC.md NG-2)."
+  en: "Published here and nowhere else, deliberately. Raw commit volume is subject to Goodhart's law: it measures typing, not production. It is shown as one series among others, never as a headline figure, and the dashboard sets no target and tracks no streak."
+  pt: "Publicado aqui e em nenhum outro lugar, deliberadamente. O volume bruto de commits está sujeito à lei de Goodhart: mede digitação, não produção. Aparece como uma série entre outras, nunca como número de destaque, e o painel não define meta nem acompanha sequência."
 github.commits.none:
   en: "No commit series has been collected yet."
   pt: "Nenhuma série de commits foi coletada ainda."
@@ -613,8 +613,8 @@ github.col.prerelease:
   en: "Pre-release"
   pt: "Pré-release"
 github.privacy_note:
-  en: "Aggregates per repository only. No issue title, no author, no e-mail address is collected or published (SPEC.md NG-5)."
-  pt: "Apenas agregados por repositório. Nenhum título de issue, autor ou endereço de e-mail é coletado ou publicado (SPEC.md NG-5)."
+  en: "Aggregates per repository only. No issue title, no author, no e-mail address is collected or published."
+  pt: "Apenas agregados por repositório. Nenhum título de issue, autor ou endereço de e-mail é coletado ou publicado."
 
 # -- Academic page ------------------------------------------------------------
 academic.title:
@@ -833,7 +833,7 @@ about.src.academic.limit:
   en: "about 100,000 requests per day"
   pt: "cerca de 100.000 req/dia"
 
-# -- SPEC.md S10, published in full and in both languages. NORMATIVE. ---------
+# -- declared limitations, published in full and in both languages -------------
 about.limits.title:
   en: "Declared limitations"
   pt: "Limitações declaradas"
@@ -895,8 +895,8 @@ about.source.title:
   en: "Source code"
   pt: "Código-fonte"
 about.source.body:
-  en: "The collectors, the consolidation pipeline and this site are a single open-source repository. The full, normative specification lives in `SPEC.md` at its root."
-  pt: "Os coletores, o pipeline de consolidação e este site são um único repositório open source. A especificação completa e normativa vive em `SPEC.md` na sua raiz."
+  en: "The collectors, the consolidation pipeline and this site live in a single open-source repository."
+  pt: "Os coletores, o pipeline de consolidação e este site vivem em um único repositório open source."
 about.source.link_label:
   en: "evandeilton/zboard on GitHub"
   pt: "evandeilton/zboard no GitHub"

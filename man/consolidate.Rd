@@ -37,31 +37,30 @@ columns \code{table}, \code{staging_rows}, \code{rows_before}, \code{rows_after}
 \code{rows_pruned} and \code{written}.
 }
 \description{
-The single write path into the canonical data store (SPEC.md S6, job
-\code{consolidate}). In one call, and in this order:
+The single write path into the canonical data store (the \code{consolidate}
+job). In one call, and in this order:
 \enumerate{
 \item \strong{Upsert} every table found in \code{staging_dir} into \code{data_dir}, by its
-natural key (SPEC.md S4.1/S4.2). Last-write-wins everywhere except
+natural key. Last-write-wins everywhere except
 \code{gh_traffic}, which merges by \code{max()} per key.
 \item \strong{Roll up} each table to calendar months into
-\verb{data_dir/archive/<table>_monthly.parquet} (SPEC.md S4.3).
+\verb{data_dir/archive/<table>_monthly.parquet}.
 \item \strong{Prune} each table to a rolling 12-month window -- and only then,
-and only for tables whose rollup succeeded in this same call
-(SPEC.md RNF-4).
+and only for tables whose rollup succeeded in this same call.
 \item \strong{Record} one \code{run_manifest} row per source processed, with a
-sanitised, truncated message (SPEC.md S4.2, S11).
+sanitised, truncated message.
 }
 }
 \details{
 \strong{Missing input is not an error.} A staging table that is absent simply
 means its collector did not run (or failed) in this execution; the
 corresponding canonical table is left untouched and the remaining tables
-are still consolidated (RNF-3). An absent \code{data_dir} is created, and an
+are still consolidated. An absent \code{data_dir} is created, and an
 absent canonical table is treated as an empty table. The function is
 therefore safe to call on a completely empty checkout.
 
 \strong{Idempotence.} Running twice with the same staging input produces the
-same canonical tables and the same row counts (RNF-5): the upsert is by
+same canonical tables and the same row counts: the upsert is by
 key, the rollup upserts the same monthly aggregate, and the prune is a
 function of the data and the reference date only.
 

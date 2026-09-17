@@ -5,16 +5,15 @@ Authors@R:
     person("José Evandeilton", "Lopes", , "evandeilton@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0007-5887-4084"))
 Description: Collects, consolidates and publishes a static, daily-updated
-    dashboard ("dashboard do Zé") consolidating CRAN check/download health,
-    GitHub development activity and academic output for a curated set of R
+    dashboard ("dashboard do Zé") of CRAN check and download health, GitHub
+    development activity and academic output for a curated set of R
     packages and repositories. Designed to run unattended from GitHub
-    Actions with no backend: Parquet is the canonical data store (orphan
-    'data' branch), JSON is derived at build time for a bilingual Quarto
-    dashboard published to GitHub Pages. See SPEC.md at the repository
-    root for the full, normative specification and site/about.qmd for
-    declared methodological limitations.
+    Actions with no backend: Parquet files on an orphan 'data' branch are
+    the canonical store, and a bilingual Quarto site is rebuilt from them
+    and published to GitHub Pages.
 License: MIT + file LICENSE
 Encoding: UTF-8
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 Imports:
     arrow,

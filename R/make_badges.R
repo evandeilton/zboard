@@ -1,12 +1,12 @@
 # ---------------------------------------------------------------------------
-# shields.io endpoint badges (SPEC.md S7.4, ADR-5).
+# shields.io endpoint badges: three JSON endpoints per curated CRAN package.
 #
 # Each file is a tiny JSON document in the shields.io *endpoint* schema:
 #   { "schemaVersion": 1, "label": "...", "message": "...", "color": "..." }
 # consumed as
 #   https://img.shields.io/endpoint?url=<public URL of the file>
 # shields.io renders, caches and themes the badge; we only publish the data
-# (ADR-5: ~15 lines of code instead of an SVG generator).
+# (~15 lines of code instead of an SVG generator).
 #
 # The default output directory is inside the Quarto output (`_site/badges/`)
 # because the badge has to be reachable at the published GitHub Pages URL.
@@ -18,7 +18,7 @@
 #' Follows the severity order `OK < NOTE < WARN < ERROR < FAIL`. `WARN` gets
 #' orange rather than yellow so that "needs attention" and "will be archived
 #' if unfixed" are not the same colour; severity is also carried by the
-#' badge text, so colour is never the only channel (SPEC.md S7.2).
+#' badge text, so colour is never the only channel.
 #'
 #' @param status A normalised status, or `NA`.
 #' @return A shields.io colour name.
@@ -59,9 +59,9 @@ zb_compact_number <- function(n) {
 #'
 #' @description
 #' Writes three JSON badge endpoints per curated CRAN package into
-#' `output_dir` (SPEC.md S7.4):
+#' `output_dir`:
 #'
-#' * `<pkg>-downloads.json` -- downloads over the last 30 days of the
+#' * `<pkg>-downloads.json` -- downloads over the last `window_days` days of the
 #'   series, e.g. `1.2k/month`, blue.
 #' * `<pkg>-check.json` -- the worst `R CMD check` status across flavours,
 #'   coloured by severity (`OK` green, `NOTE` yellow, `WARN` orange,

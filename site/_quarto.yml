@@ -2,18 +2,18 @@
 # Base Quarto project. Shared by both language profiles.
 # =============================================================================
 #
-# SPEC.md ADR-3 and ADR-4. This file carries everything that does NOT depend
+# Base project configuration. This file carries everything that does NOT depend
 # on the language; `_quarto-en.yml` and `_quarto-pt.yml` are OVERRIDES merged
 # on top of it, not replacements for it -- `quarto render site --profile en`
 # fails with "no project" if this file is absent.
 #
 # Format choice: a `website` project of plain HTML pages, not `format:
 # dashboard`. Five pages with long-form normative text (about.qmd publishes
-# SPEC.md S10 in full) read badly inside a viewport-filling dashboard grid,
-# and a website gives direct control over semantic tables and figure `alt`
-# text, which RNF-10 requires. The status cards of S7.1 are hand-written
-# HTML in `styles.css`, so the page needs no JavaScript at all: every page is
-# static HTML plus one stylesheet, which is what NG-3 and NG-6 ask for.
+# the declared limitations in full) read badly inside a viewport-filling
+# dashboard grid, and a website gives direct control over semantic tables and
+# figure `alt` text, which accessibility requires. The status cards are
+# hand-written HTML in `styles.css`, so the page needs no JavaScript at all:
+# every page is static HTML plus one stylesheet -- no server, no WASM.
 #
 # `output-dir` is relative to this directory (`site/`), so `../_site` puts
 # the build in `_site/` at the REPOSITORY root, which is what

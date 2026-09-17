@@ -2,10 +2,9 @@
    zboard dashboard styles
 
    Deliberately small and hand-written: the whole front-end is static HTML
-   plus this one stylesheet, with no JavaScript of its own (SPEC.md NG-3,
-   NG-6).
+   plus this one stylesheet, with no JavaScript of its own.
 
-   Two rules govern every colour below (RNF-10):
+   Two rules govern every colour below:
      1. Contrast. Body and label text sits at or above WCAG AA against its
         own background; the darkest state colours are ~7:1 on their tint.
      2. Colour is never the only channel. Every status tint is accompanied
@@ -45,7 +44,7 @@
   border: 0;
 }
 
-/* -- language switch (SPEC.md S7.3) --------------------------------------- */
+/* -- language switch --------------------------------------- */
 
 .zb-langbar {
   display: flex;
@@ -378,7 +377,7 @@
   font-size: 0.9rem;
 }
 
-/* -- the declared limitations (SPEC.md S10) -------------------------------- */
+/* -- the declared limitations -------------------------------- */
 
 .zb-limits {
   border-left: 4px solid var(--zb-ink-soft);

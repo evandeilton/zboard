@@ -5,11 +5,11 @@ title: "`r {source('_setup.R'); tr('academic.title')}`"
 ```{r}
 #| label: setup
 #| include: false
-## Academic (SPEC.md S7.1): publications, type, venue, year and accumulated
+## Academic: publications, type, venue, year and accumulated
 ## citations, as indexed by OpenAlex.
 ##
-## Every figure on this page is a lower bound and says so: SPEC.md S10.5 is
-## linked from the totals and restated as a note beneath them.
+## Every figure on this page is a lower bound and says so: the citation-lag
+## limitation is linked from the totals and restated as a note beneath them.
 source("_setup.R")
 
 academic <- zb_json("academic")

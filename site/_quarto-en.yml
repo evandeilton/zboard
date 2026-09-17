@@ -1,5 +1,5 @@
 # =============================================================================
-# English profile -- OVERRIDE merged on top of `_quarto.yml` (SPEC.md ADR-4).
+# English profile -- OVERRIDE merged on top of `_quarto.yml`.
 # =============================================================================
 #
 #   quarto render site --profile en   ->  ../_site        (site root, "/")

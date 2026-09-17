@@ -5,11 +5,11 @@ title: "`r {source('_setup.R'); tr('about.title')}`"
 ```{r}
 #| label: setup
 #| include: false
-## About (SPEC.md S7.1): methodology, the declared limitations of S10, the
+## About: methodology, the declared limitations of S10, the
 ## licence and a link to the source.
 ##
-## The five limitation items are NORMATIVE. SPEC.md S10 requires them
-## published in full and in both languages; they are emitted as Markdown so
+## The five limitation items are normative: they must be published in full
+## and in both languages; they are emitted as Markdown so
 ## that inline code and em dashes survive, under explicit,
 ## language-independent anchors `#lim-1` .. `#lim-5`. Those anchors are the
 ## one-click target S7.2 demands from every download figure, so they must not

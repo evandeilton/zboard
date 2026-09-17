@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# GitHub collector (SPEC.md S5, rows 5 and 6 of the source table).
+# GitHub collector: activity, repository state, releases and traffic.
 #
 # Writes four staging tables:
 #   staging/gh_activity.parquet      <- GraphQL v4 (retroactive)
@@ -10,16 +10,17 @@
 #
 # Authentication is delegated to the `gh` package, which reads GITHUB_TOKEN /
 # GITHUB_PAT from the environment. No token is ever passed through an
-# argument here, and none is ever printed (SPEC.md S11).
+# argument here, and none is ever printed.
 #
 # Design note on `gh_activity.commits`
 # ------------------------------------
-# SPEC.md S5 names `contributionsCollection` as the GraphQL area for GitHub
-# activity, but that connection is scoped to a *user* and gives no clean
-# per-repository daily granularity. The column it has to fill is documented
-# in S4.2 as "commits no branch default", which is exactly
-# `defaultBranchRef.target.history`. We page that connection's `nodes` and
-# group `committedDate` by UTC day in R, rather than asking for `totalCount`
+# An earlier design sketch named `contributionsCollection` as the GraphQL
+# area for GitHub activity, but that connection is scoped to a *user* and
+# gives no clean per-repository daily granularity. The column it has to
+# fill is the data model's count of commits on the default branch, which is
+# exactly `defaultBranchRef.target.history`. We page that connection's
+# `nodes` and group `committedDate` by UTC day in R, rather than asking for
+# `totalCount`
 # once per day, because a single paged query serves both the incremental run
 # and a twelve-month backfill with the same code path and a bounded number
 # of requests.
@@ -27,7 +28,7 @@
 
 #' Run a GraphQL query against the GitHub v4 API
 #'
-#' Wraps `gh::gh_gql()` with the pipeline retry policy (RNF-7) and turns a
+#' Wraps `gh::gh_gql()` with the pipeline retry policy and turns a
 #' GraphQL-level `errors` payload -- which arrives with HTTP 200 and would
 #' otherwise be silently treated as an empty result -- into an R error.
 #'
@@ -392,7 +393,7 @@ zb_map_repos <- function(repos, fn, label, combine = TRUE) {
 #' Collect GitHub activity, repository state, releases and traffic
 #'
 #' @description
-#' Collects the four GitHub-side tables of SPEC.md S4.2 for the
+#' Collects the four GitHub-side tables for the
 #' repositories curated in `config/repos.yml`, writing each as a Parquet
 #' file in `staging_dir` for [consolidate()]:
 #'
@@ -405,27 +406,27 @@ zb_map_repos <- function(repos, fn, label, combine = TRUE) {
 #'
 #' Repositories are collected independently of each other and the four
 #' tables independently of each other, so one 404 or one missing scope
-#' degrades a single cell of the dashboard rather than the run (RNF-3).
+#' degrades a single cell of the dashboard rather than the run.
 #'
 #' @details
 #' **Authentication.** Delegated to the `gh` package, which picks up
 #' `GITHUB_TOKEN` (or `GITHUB_PAT`) from the environment; no token is
 #' accepted as an argument and none is ever logged. Traffic additionally
-#' requires the `Administration: read` scope of the fine-grained PAT
-#' (SPEC.md S11); without it the traffic table alone is recorded as failed.
+#' requires the `Administration: read` scope of the fine-grained PAT;
+#' without it the traffic table alone is recorded as failed.
 #'
 #' **Traffic is not retroactive.** The GitHub API keeps 14 days and nothing
 #' more, which is why the monthly rollup in [consolidate()] is the only
-#' long-term copy (SPEC.md S4.3). Passing `from`/`to` therefore has no
-#' effect on `gh_traffic`: the window is ignored for that table with a
-#' message, and the collector continues rather than failing (SPEC.md S6,
-#' "Backfill ... Não aplicável a `gh_traffic`").
+#' long-term copy. Passing `from`/`to` therefore has no effect on
+#' `gh_traffic`: the window is ignored for that table with a message, and
+#' the collector continues rather than failing. Backfill is not applicable
+#' to `gh_traffic`.
 #'
 #' `gh_repo_snapshot` and `gh_releases` are likewise snapshots, so
 #' `from`/`to` apply only to `gh_activity`.
 #'
 #' Only aggregates per repository are collected. No contributor profile,
-#' issue author or e-mail address is ever read or stored (NG-5).
+#' issue author or e-mail address is ever read or stored.
 #'
 #' @param from Start of the activity window as an ISO-8601 date string or a
 #'   `Date`. `NULL` (the default) means normal incremental mode: a rolling
@@ -433,8 +434,7 @@ zb_map_repos <- function(repos, fn, label, combine = TRUE) {
 #' @param to End of the activity window, same forms as `from`. `NULL`
 #'   defaults to today; the current UTC day is partial and is corrected by
 #'   the next run under last-write-wins.
-#' @param config_path Path to the curated source configuration
-#'   (SPEC.md S5).
+#' @param config_path Path to the curated source configuration.
 #' @param staging_dir Directory the staging Parquet files are written to.
 #'   Created when missing.
 #' @param run_ts Timestamp shared by every manifest row of this run.

@@ -2,30 +2,31 @@
 # Consolidation: upsert -> monthly rollup -> 12-month prune -> run manifest.
 #
 # This is the one function in the pipeline where getting the *order* wrong
-# destroys data permanently (SPEC.md RNF-4, S13 "Poda apaga tráfego antes do
-# rollup": probability low, impact high, irreversible). The rollup of a
-# period must be on disk before the daily rows of that period are pruned,
+# destroys data permanently: pruning traffic before its rollup is on disk is
+# unlikely, but high-impact and irreversible. The rollup of a period must
+# be on disk before the daily rows of that period are pruned,
 # and the prune must be abandoned -- for that table -- when the rollup did
 # not succeed in this very call. `zb_retention_step()` implements that as an
 # explicit gate whose outcome is part of the return value, so a test can
 # force the rollup to fail and assert that nothing was pruned.
 #
-# Deviation from the SPEC.md S6 diagram, deliberate
-# -------------------------------------------------
-# The diagram writes the rollup to a single `data/archive/monthly.parquet`.
-# That is a simplification the data model does not support: the nine rolled
-# up tables have different schemas (cran_downloads is month/package/int,
-# gh_repo_snapshot is month/repo/eight mixed columns, ...), and forcing them
-# into one typed Parquet file would mean either a string blob column or a
-# union of ~25 mostly-NULL columns -- both of which give up the typing that
-# ADR-2 chose Parquet for in the first place. One file per table,
-# `data/archive/<table>_monthly.parquet`, keeps every archive column typed
-# and keeps the rollup of one table independent of the others' failures.
+# One archive file per table, deliberate
+# --------------------------------------
+# An earlier design sketch wrote the rollup to a single
+# `data/archive/monthly.parquet`. That is a simplification the data model
+# does not support: the nine rolled up tables have different schemas
+# (cran_downloads is month/package/int, gh_repo_snapshot is month/repo/eight
+# mixed columns, ...), and forcing them into one typed Parquet file would
+# mean either a string blob column or a union of ~25 mostly-NULL columns --
+# both of which give up the typing Parquet was chosen for in the first
+# place. One file per table, `data/archive/<table>_monthly.parquet`, keeps
+# every archive column typed and keeps the rollup of one table independent
+# of the others' failures.
 # ---------------------------------------------------------------------------
 
 #' Aggregate a table to calendar months
 #'
-#' Two semantics, per SPEC.md S4.3:
+#' Two semantics:
 #' * `"sum"` (`cran_downloads`, `gh_activity`, `gh_traffic`) -- every numeric
 #'   column summed over the month.
 #' * `"last"` (`gh_repo_snapshot`, `cran_checks`, `cran_status`,
@@ -34,7 +35,7 @@
 #' Note on `gh_traffic`: summing `view_uniques`/`clone_uniques` over a month
 #' counts a visitor once per day they appear, so the monthly figure is an
 #' upper bound on distinct visitors, not a distinct count. The GitHub API
-#' exposes no monthly unique figure, and S4.3 prescribes `sum`; the
+#' exposes no monthly unique figure, and the rollup is a `sum`; the
 #' dashboard labels it accordingly.
 #'
 #' @param tbl Table name.
@@ -116,7 +117,7 @@ zb_rollup_monthly <- function(tbl, df, archive_dir) {
   invisible(nrow(merged))
 }
 
-#' Apply the retention policy to one table (SPEC.md RNF-4)
+#' Apply the retention policy to one table
 #'
 #' The gate. In order:
 #' 1. Roll the table up to months and write the archive -- unless the table
@@ -145,7 +146,7 @@ zb_retention_step <- function(tbl, df, archive_dir, cutoff) {
       rollup <- "failed"
       rollup_msg <- zb_sanitize(conditionMessage(res))
       cli::cli_alert_danger(
-        "{.field {tbl}}: monthly rollup FAILED ({rollup_msg}); the 12-month prune is abandoned for this table (RNF-4)."
+        "{.field {tbl}}: monthly rollup FAILED ({rollup_msg}); the 12-month prune is abandoned for this table."
       )
     } else {
       rollup <- "ok"
@@ -191,30 +192,29 @@ zb_read_staging_manifests <- function(staging_dir) {
 #' Consolidate staged collections into the canonical Parquet store
 #'
 #' @description
-#' The single write path into the canonical data store (SPEC.md S6, job
-#' `consolidate`). In one call, and in this order:
+#' The single write path into the canonical data store (the `consolidate`
+#' job). In one call, and in this order:
 #'
 #' 1. **Upsert** every table found in `staging_dir` into `data_dir`, by its
-#'    natural key (SPEC.md S4.1/S4.2). Last-write-wins everywhere except
+#'    natural key. Last-write-wins everywhere except
 #'    `gh_traffic`, which merges by `max()` per key.
 #' 2. **Roll up** each table to calendar months into
-#'    `data_dir/archive/<table>_monthly.parquet` (SPEC.md S4.3).
+#'    `data_dir/archive/<table>_monthly.parquet`.
 #' 3. **Prune** each table to a rolling 12-month window -- and only then,
-#'    and only for tables whose rollup succeeded in this same call
-#'    (SPEC.md RNF-4).
+#'    and only for tables whose rollup succeeded in this same call.
 #' 4. **Record** one `run_manifest` row per source processed, with a
-#'    sanitised, truncated message (SPEC.md S4.2, S11).
+#'    sanitised, truncated message.
 #'
 #' @details
 #' **Missing input is not an error.** A staging table that is absent simply
 #' means its collector did not run (or failed) in this execution; the
 #' corresponding canonical table is left untouched and the remaining tables
-#' are still consolidated (RNF-3). An absent `data_dir` is created, and an
+#' are still consolidated. An absent `data_dir` is created, and an
 #' absent canonical table is treated as an empty table. The function is
 #' therefore safe to call on a completely empty checkout.
 #'
 #' **Idempotence.** Running twice with the same staging input produces the
-#' same canonical tables and the same row counts (RNF-5): the upsert is by
+#' same canonical tables and the same row counts: the upsert is by
 #' key, the rollup upserts the same monthly aggregate, and the prune is a
 #' function of the data and the reference date only.
 #'

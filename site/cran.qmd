@@ -5,11 +5,11 @@ title: "`r {source('_setup.R'); tr('cran.title')}`"
 ```{r}
 #| label: setup
 #| include: false
-## CRAN (SPEC.md S7.1): status by package and flavour, the daily download
+## CRAN: status by package and flavour, the daily download
 ## series with vertical release markers, and the permanent version history.
 ##
-## SPEC.md S7.2 is enforced here twice over: every download figure carries
-## the mandatory "partial sample" label and a one-click link to the S10.1
+## The download-label rule is enforced here twice over: every download figure
+## carries the mandatory "partial sample" label and a one-click link to the
 ## limitation, and every figure is dated by its own most recent datum
 ## (cran_downloads.json -> latest_data_date), never by the build time.
 source("_setup.R")
@@ -152,7 +152,7 @@ if (nrow(daily) == 0L) {
   plot <- ggplot(daily, aes(x = date, y = downloads))
 
   # Release markers exist to make the rebuild artefact visible, never to
-  # correct it (SPEC.md S10.3).
+  # correct it.
   if (nrow(markers) > 0L) {
     plot <- plot + geom_vline(
       data = markers, aes(xintercept = date),

@@ -24,7 +24,7 @@ missing.}
 \verb{archive/} inside \code{data_dir}.}
 
 \item{downloads_window_days}{Length, in days, of the daily download and
-activity series exported (the rolling window of SPEC.md S4.3).}
+activity series exported (the rolling daily window).}
 
 \item{redact_emails}{Strip e-mail addresses from \code{maintainer} before
 publishing. Leave \code{TRUE} unless you have a specific reason not to.}
@@ -53,8 +53,7 @@ contract between this package and the front-end; read it there.
 An absent Parquet file is an empty table, not an error, and every array
 in the output is emitted even when empty. Calling this on a directory
 with no data at all produces ten valid, empty-but-well-formed JSON files,
-which is what lets the site build before the first collection has run
-(RNF-3).
+which is what lets the site build before the first collection has run.
 
 Dates and timestamps are serialised as ISO-8601 strings; no Arrow or R
 date type reaches the JSON. Numbers are written at full precision
@@ -62,7 +61,7 @@ date type reaches the JSON. Numbers are written at full precision
 
 \code{cran_status$maintainer} is collected from CRAN with an e-mail address
 attached. Because these files are published on a public site, the address
-is removed by default, leaving the display name (SPEC.md S11, NG-5).
+is removed by default, leaving the display name.
 }
 \examples{
 # Works on an empty store: every file is written, every array is empty.

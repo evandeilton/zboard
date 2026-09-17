@@ -19,8 +19,7 @@ string or a \code{Date}. \code{NULL} (the default) applies no lower bound.}
 
 \item{to}{Optional upper bound on publication date, same forms as \code{from}.}
 
-\item{config_path}{Path to the curated source configuration
-(SPEC.md S5).}
+\item{config_path}{Path to the curated source configuration.}
 
 \item{staging_dir}{Directory the staging Parquet file is written to.
 Created when missing.}
@@ -37,7 +36,7 @@ the \code{academic_works} source. The same row is written to
 \code{staging_dir/run_manifest_academic.parquet}.
 }
 \description{
-Collects the \code{academic_works} snapshot of SPEC.md S4.2 -- publications,
+Collects the \code{academic_works} snapshot -- publications,
 preprints, datasets and software attributed to the ORCID iD configured in
 \code{config/repos.yml}, with their venue, year, type and accumulated citation
 count -- and writes it as \code{staging_dir/academic_works.parquet} for
@@ -46,7 +45,7 @@ count -- and writes it as \code{staging_dir/academic_works.parquet} for
 \details{
 \strong{Polite pool.} OpenAlex serves anonymous callers from a slower, shared
 pool. Supplying a contact address moves the caller to the polite pool.
-The address is a repository secret (SPEC.md S11): it is read from
+The address is a repository secret: it is read from
 \code{OPENALEX_MAILTO} as the default of the \code{mailto} argument, is never
 hard-coded, and is never written to any output file. When the variable is
 unset the collector still runs, unauthenticated, and says so.
@@ -59,12 +58,12 @@ date} of the works to collect (OpenAlex's \code{from_publication_date} /
 collects the whole body of work in every run.
 
 \strong{Type values.} \code{type} is stored exactly as OpenAlex reports it
-(\code{article}, \code{preprint}, \code{dataset}, \code{book-chapter}, ...). SPEC.md S4.2
-lists four illustrative values; normalising to that closed set would
+(\code{article}, \code{preprint}, \code{dataset}, \code{book-chapter}, ...). The column is
+deliberately not normalised onto a closed set of values; doing so would
 discard information the dashboard can display verbatim.
 
 Only the author's own works are collected. No co-author name, identifier
-or affiliation is stored (NG-5).
+or affiliation is stored.
 }
 \examples{
 \dontrun{

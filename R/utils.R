@@ -8,17 +8,17 @@
 #
 # Design notes
 # ------------
-# * The canonical table schemas of SPEC.md S4.2 live in one place --
-#   `zb_schemas()` -- together with the natural key, the merge semantics
-#   (S4.2), and the retention policy (S4.3). Every read, write, upsert,
+# * The canonical table schemas live in one place -- `zb_schemas()` --
+#   together with the natural key, the merge semantics and the retention
+#   policy. Every read, write, upsert,
 #   rollup and prune consults that registry instead of re-stating column
 #   names, so a schema change is a one-line change.
 # * All HTTP goes through `zb_req_perform()` (httr2) or `zb_retry()`
-#   (everything else: gh, cranlogs, tools::CRAN_*). Both implement RNF-7:
+#   (everything else: gh, cranlogs, tools::CRAN_*). Both retry the same way:
 #   3 attempts, exponential backoff on 5xx/timeouts, `Retry-After` honoured
 #   on 429.
 # * `zb_sanitize()` is the single chokepoint for anything that ends up in
-#   `run_manifest$message`, which is published as public JSON (SPEC.md S11).
+#   `run_manifest$message`, which is published as public JSON.
 # ---------------------------------------------------------------------------
 
 #' @importFrom rlang %||% .data
@@ -28,10 +28,10 @@ NULL
 
 #' CRAN check status severity levels
 #'
-#' The five `R CMD check` outcomes of SPEC.md S4.2, in increasing severity.
+#' The five `R CMD check` outcomes, in increasing severity.
 #' `tools::CRAN_check_results()` spells two of them differently
-#' (`WARNING`, `FAILURE`); `zb_normalize_status()` maps those onto the
-#' spec's enum.
+#' (`WARNING`, `FAILURE`); `zb_normalize_status()` maps those onto this
+#' enum.
 #'
 #' @return Character vector of length 5, ordered from least to most severe.
 #' @keywords internal
@@ -40,7 +40,7 @@ zb_status_levels <- function() {
   c("OK", "NOTE", "WARN", "ERROR", "FAIL")
 }
 
-#' Normalise a CRAN check status onto the SPEC.md enum
+#' Normalise a CRAN check status onto the package's status enum
 #'
 #' @param x Character or factor vector of raw statuses.
 #' @return Character vector using the `OK`/`NOTE`/`WARN`/`ERROR`/`FAIL` enum;
@@ -193,17 +193,17 @@ zb_coerce <- function(df, cols) {
 
 #' Canonical table registry
 #'
-#' One entry per table of SPEC.md S4.2. Each entry records:
+#' One entry per canonical table. Each entry records:
 #' \describe{
 #'   \item{cols}{named character vector `column = type` (see `zb_na_of()`)}
-#'   \item{keys}{natural key used for the idempotent upsert (S4.1)}
+#'   \item{keys}{natural key used for the idempotent upsert}
 #'   \item{merge}{`"last"` (last-write-wins) or `"max"` -- only `gh_traffic`
 #'     uses `"max"`, because a mid-day read returns a partial count and
-#'     overwriting with a smaller value destroys consolidated data (S4.2)}
+#'     overwriting with a smaller value destroys consolidated data}
 #'   \item{date_col}{column that carries the retention window's date}
-#'   \item{rollup}{`"sum"`, `"last"` (last snapshot of the month) or `"none"`
-#'     (S4.3)}
-#'   \item{prune}{whether the 12-month rolling window applies (S4.3);
+#'   \item{rollup}{`"sum"`, `"last"` (last snapshot of the month) or
+#'     `"none"`}
+#'   \item{prune}{whether the 12-month rolling window applies;
 #'     `cran_versions` and `gh_releases` are permanent}
 #'   \item{group}{extra grouping columns for the monthly rollup, i.e. the
 #'     natural key minus the date column}
@@ -298,7 +298,7 @@ zb_schemas <- function() {
       keys = c("run_ts", "source"), merge = "last",
       date_col = "run_ts", group = "source",
       # Pipeline telemetry, not published data: pruned to the same rolling
-      # window so the `data` branch stays small (RNF-9), but never rolled up
+      # window so the `data` branch stays small, but never rolled up
       # -- a monthly aggregate of run statuses would be meaningless.
       rollup = "none", prune = TRUE
     )
@@ -321,8 +321,8 @@ zb_schema <- function(tbl) {
 
 #' Empty, fully typed tibble for a table
 #'
-#' An absent Parquet file is not an error anywhere in this pipeline
-#' (SPEC.md RNF-3): a missing table is an empty table.
+#' An absent Parquet file is not an error anywhere in this pipeline: a
+#' missing table is an empty table.
 #'
 #' @param tbl Table name.
 #' @return A zero-row tibble with the canonical schema.
@@ -354,7 +354,7 @@ zb_read_table <- function(dir, tbl, coerce = TRUE) {
 
 #' Write a pipeline table to Parquet
 #'
-#' Uses zstd compression (SPEC.md S4.1) when the Arrow build supports it,
+#' Uses zstd compression when the Arrow build supports it,
 #' falling back to Arrow's default otherwise.
 #'
 #' @param df Data frame to write.
@@ -406,7 +406,7 @@ zb_dedupe_last <- function(df, keys) {
 
 #' Idempotent upsert by natural key
 #'
-#' Implements the two merge semantics of SPEC.md S4.2:
+#' Implements the two merge semantics of the table registry:
 #' * `"last"` -- last-write-wins. Incoming rows replace existing rows with
 #'   the same key; keys absent from `new` are untouched.
 #' * `"max"` -- element-wise `max()` per key over every numeric column. Used
@@ -415,8 +415,7 @@ zb_dedupe_last <- function(df, keys) {
 #'   with a smaller, partial value. The source is irrecoverable (14-day
 #'   retention), so the loss would be permanent.
 #'
-#' Re-running with identical input is a no-op in both modes, which is what
-#' RNF-5 requires.
+#' Re-running with identical input is a no-op in both modes.
 #'
 #' @param old Existing table (possibly zero rows).
 #' @param new Incoming rows (possibly zero rows).
@@ -434,8 +433,8 @@ zb_upsert <- function(old, new, keys, merge = c("last", "max"), cols = NULL) {
   }
   # Row order is part of the output, not an accident: two runs that agree on
   # content must also agree byte-for-byte on the Parquet they write, or
-  # RNF-5 ("same state") is only true up to a permutation and the `data`
-  # branch churns a full rewrite every day. The sort is radix (C locale) so
+  # "same state" is only true up to a permutation and the `data` branch
+  # churns a full rewrite every day. The sort is radix (C locale) so
   # it does not depend on the runner's collation.
   sort_by_keys <- function(df) {
     df <- tibble::as_tibble(df)
@@ -508,7 +507,7 @@ zb_http_status <- function(e) {
   NA_integer_
 }
 
-#' Is an error condition worth retrying? (RNF-7)
+#' Is an error condition worth retrying?
 #'
 #' @param e A condition object.
 #' @return `TRUE` for 429/5xx and for transport-level timeouts.
@@ -563,10 +562,11 @@ zb_retry_after <- function(e) {
   if (is.na(v)) NULL else v
 }
 
-#' Retry a call with exponential backoff (RNF-7)
+#' Retry a call with exponential backoff
 #'
-#' Three attempts by default; the delay doubles on each retry and a
-#' `Retry-After` header, when present, overrides it. Non-transient errors
+#' Three attempts by default; the delay doubles on each retry, capped at
+#' 120 seconds, and a `Retry-After` header, when present, overrides it
+#' (still subject to the cap). Non-transient errors
 #' (4xx other than 429, parse errors, ...) are re-raised immediately -- a
 #' 401 from an expired PAT must fail loudly, not after 3 sleeps.
 #'
@@ -606,7 +606,7 @@ zb_retry <- function(f, max_tries = 3L, base_delay = 1, label = "request",
   invisible(NULL)
 }
 
-#' Perform an httr2 request with the pipeline's retry policy (RNF-7)
+#' Perform an httr2 request with the pipeline's retry policy
 #'
 #' @param req An `httr2_request`.
 #' @param max_tries Maximum number of attempts.
@@ -633,13 +633,13 @@ zb_req_perform <- function(req, max_tries = 3L, timeout = 60) {
 
 #' Sanitise and truncate a message destined for `run_manifest`
 #'
-#' `run_manifest$message` is exported verbatim to public JSON
-#' (SPEC.md S11), so it must never carry a token, a PAT, a URL credential
-#' or a third-party e-mail address (NG-5). This redacts, in order:
+#' `run_manifest$message` is exported verbatim to public JSON, so it must
+#' never carry a token, a PAT, a URL credential or a third-party e-mail
+#' address. This redacts, in order:
 #' the literal values of the pipeline's own secret environment variables,
 #' GitHub token shapes, `key: value` pairs whose key looks like a
 #' credential, e-mail addresses, and `user:pass@host` URL credentials.
-#' The result is squished and truncated to `max_chars` (SPEC.md S4.2).
+#' The result is squished and truncated to `max_chars`.
 #'
 #' @param x Message (any length; collapsed to one string).
 #' @param max_chars Maximum length of the result.
@@ -693,7 +693,7 @@ zb_sanitize <- function(x, max_chars = 500L) {
 #'
 #' `cran_status$maintainer` is collected verbatim from CRAN, which includes
 #' an address. `export_json()` publishes that column, so the address is
-#' removed by default before it reaches a public JSON file (SPEC.md S11).
+#' removed by default before it reaches a public JSON file.
 #'
 #' @param x Character vector of `Name <mail@@example.com>` strings.
 #' @return Character vector with the bracketed address removed.
@@ -778,7 +778,7 @@ zb_result <- function(data, status = "ok", message = NA_character_) {
 
 #' Run one sub-collector, write its staging table, return its manifest row
 #'
-#' The isolation boundary required by RNF-3: an error inside `fn` is caught,
+#' The isolation boundary of the pipeline: an error inside `fn` is caught,
 #' logged (sanitised) and turned into a `failed` manifest row, so the
 #' remaining sources of the same collector still run and still publish.
 #'
@@ -833,7 +833,7 @@ zb_split_repo <- function(repo) {
 #' `end_offset` days before today and `default_days` long. Re-collecting a
 #' rolling window (rather than only yesterday) is deliberate: the upstream
 #' sources restate recent days, and last-write-wins makes the repeated
-#' write free, so the series self-heals after an outage (RNF-3).
+#' write free, so the series self-heals after an outage.
 #'
 #' @param from Start date (`Date`, ISO string, `NULL` or `NA`).
 #' @param to End date (`Date`, ISO string, `NULL` or `NA`).
@@ -877,7 +877,7 @@ zb_is_backfill <- function(from, to) {
   usable(from) || usable(to)
 }
 
-#' Turn `options(warn = 2)` on under CI (RNF-8)
+#' Turn `options(warn = 2)` on under CI
 #'
 #' Not called from anywhere inside the package: changing a global option as
 #' a side effect of loading or of running a pipeline step would be wrong
@@ -900,7 +900,7 @@ zb_ci_strict_warnings <- function() {
 
 #' Read the curated source configuration
 #'
-#' Reads `config/repos.yml` (SPEC.md S5): the explicit, editorial list of
+#' Reads `config/repos.yml`: the explicit, editorial list of
 #' CRAN packages, GitHub repositories and the ORCID iD to collect.
 #' Anything not listed here is not collected, not aggregated and not
 #' displayed.

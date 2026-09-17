@@ -29,9 +29,9 @@ Invisibly, a tibble with one row per badge and the columns
 }
 \description{
 Writes three JSON badge endpoints per curated CRAN package into
-\code{output_dir} (SPEC.md S7.4):
+\code{output_dir}:
 \itemize{
-\item \verb{<pkg>-downloads.json} -- downloads over the last 30 days of the
+\item \verb{<pkg>-downloads.json} -- downloads over the last \code{window_days} days of the
 series, e.g. \verb{1.2k/month}, blue.
 \item \verb{<pkg>-check.json} -- the worst \verb{R CMD check} status across flavours,
 coloured by severity (\code{OK} green, \code{NOTE} yellow, \code{WARN} orange,

@@ -5,14 +5,14 @@ title: "`r {source('_setup.R'); tr('github.title')}`"
 ```{r}
 #| label: setup
 #| include: false
-## GitHub (SPEC.md S7.1): repository state, issue and pull-request activity,
+## GitHub: repository state, issue and pull-request activity,
 ## traffic with its per-repository start-of-series notice, and releases.
 ##
-## NG-2 governs the ordering of this page. Commits are the LAST section, one
+## Commits must never be a headline: they are the LAST section here, one
 ## series among several, with `github.commits.lead` stating why they sit
 ## there. They appear on no other page and in no headline position.
 ##
-## SPEC.md S10.4 is satisfied by `github.traffic.started`, printed once per
+## The truncated-traffic caveat is met by `github.traffic.started`, printed once per
 ## repository from `gh_traffic.json -> series[].series_start_date`.
 source("_setup.R")
 
@@ -182,7 +182,7 @@ if (nrow(long) == 0L || sum(long$value, na.rm = TRUE) == 0) {
 ```{r}
 #| label: traffic-start
 #| results: asis
-# SPEC.md S10.4: the start of the series, stated per repository. Everything
+# The start of the traffic series, stated per repository. Everything
 # before it is unrecoverable by design of the GitHub API.
 if (nrow(traffic_series) == 0L) {
   zb_out(zb_no_data(tr("github.traffic.none")))
@@ -297,7 +297,7 @@ if (nrow(releases) == 0L) {
 ```{r}
 #| label: commits
 #| results: asis
-# NG-2: commits appear here and nowhere else, as one secondary series at the
+# Commits appear here and nowhere else, as one secondary series at the
 # foot of one page. No total, no ranking, no target.
 long <- zb_long(activity, "commits")
 if (nrow(long) == 0L || sum(long$value, na.rm = TRUE) == 0) {

@@ -4,13 +4,20 @@
 \name{zboard-package}
 \alias{zboard}
 \alias{zboard-package}
-\title{zboard: Public Production Monitoring for Curated R Packages and Repositories}
+\title{zboard: Public production monitoring for curated R packages and repositories}
 \description{
 "Dashboard do Zé" -- collects, consolidates and publishes a static,
-daily-updated dashboard consolidating CRAN check/download health, GitHub
+daily-updated dashboard of CRAN check and download health, GitHub
 development activity and academic output for a curated set of R packages
-and repositories. See \code{SPEC.md} at the repository root for the full,
-normative specification.
+and repositories.
+}
+\details{
+The pipeline is a sequence of exported functions: the collectors
+\code{\link[=collect_cran]{collect_cran()}}, \code{\link[=collect_github]{collect_github()}} and \code{\link[=collect_academic]{collect_academic()}} write staged
+Parquet tables; \code{\link[=consolidate]{consolidate()}} merges them into the canonical store;
+\code{\link[=export_json]{export_json()}} and \code{\link[=make_badges]{make_badges()}} derive what the dashboard and the
+shields.io badges read; \code{\link[=run_alerts]{run_alerts()}} turns CRAN check failures into
+GitHub issues.
 }
 \seealso{
 Useful links:

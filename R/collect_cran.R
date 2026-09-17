@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# CRAN collector (SPEC.md S5, first four rows of the source table).
+# CRAN collector: downloads, versions, check results and archival status.
 #
 # Writes four staging tables:
 #   staging/cran_downloads.parquet  <- cranlogs.r-pkg.org        (retroactive)
@@ -9,7 +9,7 @@
 #                                      + CRAN_archive_db + crandb
 #
 # All four are attempted independently: a crandb outage does not stop the
-# download series from being collected (RNF-3).
+# download series from being collected.
 # ---------------------------------------------------------------------------
 
 #' Fetch daily CRAN download counts
@@ -18,7 +18,7 @@
 #' installed, and falls back to a direct `httr2` call against the same
 #' service otherwise, so the collector still works in a minimal CI image.
 #' Either way this is a single HTTP request for the whole package set, which
-#' respects the "1 request per package per day" courtesy limit of SPEC.md S5.
+#' respects the "1 request per package per day" courtesy limit.
 #'
 #' @param pkgs Character vector of package names.
 #' @param from,to `Date` bounds, inclusive.
@@ -107,7 +107,7 @@ zb_fetch_crandb <- function(pkgs) {
 #'
 #' crandb's `timeline` element maps every published version to its CRAN
 #' publication timestamp, which is exactly the retroactive release history
-#' the download chart needs for its release markers (SPEC.md S7.1).
+#' the download chart needs for its release markers.
 #'
 #' @param docs Named list from `zb_fetch_crandb()`.
 #' @return A `zb_result()` carrying a `cran_versions` tibble.
@@ -141,11 +141,12 @@ zb_build_cran_versions <- function(docs) {
 #' Build the `cran_checks` table from the official check-results table
 #'
 #' `tools::CRAN_check_results()` reads CRAN's own `.rds` artifact (no HTML
-#' scraping, NG-4). Its `Status` column is an ordered factor whose labels
-#' are `OK < NOTE < WARNING < ERROR < FAILURE`; SPEC.md S4.2 spells the last
-#' two `WARN` and `FAIL`, so `zb_normalize_status()` maps them. An
-#' unexpected label becomes `NA` rather than being silently accepted, which
-#' is the explicit-failure-on-schema-drift mitigation of SPEC.md S13.
+#' scraping). Its `Status` column is an ordered factor whose labels are
+#' `OK < NOTE < WARNING < ERROR < FAILURE`; the package's status enum spells
+#' the last two `WARN` and `FAIL`, so `zb_normalize_status()` maps them. An
+#' unexpected label becomes `NA` rather than being silently accepted, so a
+#' change to the upstream vocabulary surfaces explicitly instead of drifting
+#' into the store unnoticed.
 #'
 #' @param pkgs Character vector of package names.
 #' @param snapshot_date Snapshot date for the rows.
@@ -266,7 +267,7 @@ zb_build_cran_status <- function(pkgs, docs, checks, snapshot_date) {
 #' Collect CRAN health, version and download data
 #'
 #' @description
-#' Collects the four CRAN-side tables of SPEC.md S4.2 for the packages
+#' Collects the four CRAN-side tables for the packages
 #' curated in `config/repos.yml`, and writes each one as a Parquet file in
 #' `staging_dir` for [consolidate()] to upsert:
 #'
@@ -281,8 +282,8 @@ zb_build_cran_status <- function(pkgs, docs, checks, snapshot_date) {
 #'
 #' Each of the four is collected independently: a failure in one is
 #' recorded in the run manifest and does not prevent the others from being
-#' written (RNF-3). Every network call retries three times with exponential
-#' backoff on 5xx/timeout and honours `Retry-After` on 429 (RNF-7).
+#' written. Every network call retries three times with exponential
+#' backoff on 5xx/timeout and honours `Retry-After` on 429.
 #'
 #' @details
 #' Only `cran_downloads` is retroactive. `cran_checks` and `cran_status` are
@@ -302,8 +303,7 @@ zb_build_cran_status <- function(pkgs, docs, checks, snapshot_date) {
 #' @param to End of the download window, same forms as `from`. `NULL`
 #'   defaults to yesterday, because the current UTC day is still incomplete
 #'   upstream.
-#' @param config_path Path to the curated source configuration
-#'   (SPEC.md S5).
+#' @param config_path Path to the curated source configuration.
 #' @param staging_dir Directory the staging Parquet files are written to.
 #'   Created when missing.
 #' @param run_ts Timestamp shared by every manifest row of this run.

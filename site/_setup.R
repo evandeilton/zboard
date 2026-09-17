@@ -9,20 +9,20 @@
 # ------------------------
 # * JSON access, against the contract documented at the top of
 #   R/export_json.R. Every array is present but may be empty, so every reader
-#   below degrades to an empty table rather than an error (RNF-3).
+#   below degrades to an empty table rather than an error.
 # * Formatting. Numbers and dates are localised from `config/i18n.yml`, never
 #   from the system locale: a CI runner has no guarantee of a pt_BR locale,
 #   and a silently English month name in the Portuguese build is exactly the
 #   kind of defect nobody notices.
 # * HTML components. Hand-written, so that tables carry `<th scope>` and a
-#   `<caption>`, and figures carry a real `alt` (RNF-10).
+#   `<caption>`, and figures carry a real `alt`.
 # * Figures. ggplot2 rendered to a PNG and embedded as a data URI. The page
 #   then has no JavaScript and no external asset at all, which keeps the
-#   deliverable a pile of static HTML (NG-3, NG-6) and puts the `alt` text
+#   deliverable a pile of static HTML and puts the `alt` text
 #   under direct control instead of a chunk option.
 #
 # Status is NEVER encoded by colour alone: every status carries a symbol, a
-# text label and a screen-reader description (SPEC.md S7.2, RNF-10).
+# text label and a screen-reader description.
 
 suppressPackageStartupMessages({
   library(ggplot2)
@@ -241,7 +241,7 @@ zb_md_inline <- function(x) {
 #' Markdown Markdown.
 zb_out <- function(...) cat("\n", paste0(..., collapse = ""), "\n\n", sep = "")
 
-#' The language switch of SPEC.md S7.3: a static link between `/` and `/pt/`
+#' The language switch: a static link between `/` and `/pt/`
 #' that preserves the page path. Quarto's navbar is a fixed YAML href and
 #' cannot do this, so the switch lives in the page body.
 zb_lang_bar <- function(page) {
@@ -263,7 +263,7 @@ zb_lang_bar <- function(page) {
 }
 
 #' Page header: the language switch, the date of the most recent datum (never
-#' the build date, SPEC.md S7.2) and, separately labelled, the build time.
+#' the build date) and, separately labelled, the build time.
 zb_page_header <- function(page, latest_date = NULL) {
   latest <- if (is.null(latest_date) || is.na(latest_date)) {
     tr("common.latest_datum_unknown")
@@ -290,7 +290,7 @@ zb_status_key <- function(status) {
 }
 
 #' A CRAN check status: symbol + text label + screen-reader description.
-#' Colour is decoration here, never the information channel (RNF-10).
+#' Colour is decoration here, never the information channel.
 zb_status <- function(status) {
   key <- zb_status_key(status)
   symbols <- c(
@@ -325,7 +325,7 @@ zb_run_status <- function(status) {
 }
 
 #' A semantic HTML table: `<caption>`, `<th scope="col">` and, optionally, a
-#' row header per row (RNF-10). Hand-written rather than `knitr::kable()`,
+#' row header per row. Hand-written rather than `knitr::kable()`,
 #' which emits neither `scope` nor a per-column escaping policy.
 #'
 #' @param raw Names of columns already containing trusted HTML (a status
@@ -392,7 +392,7 @@ zb_kpis <- function(items) {
   paste0('<div class="zb-kpi-grid">', paste0(cards, collapse = ""), "</div>")
 }
 
-#' One package status card (SPEC.md S7.1).
+#' One package status card.
 zb_pkg_card <- function(row) {
   fact <- function(label, value, extra = NULL) {
     paste0(
@@ -461,8 +461,8 @@ zb_pkg_card <- function(row) {
   )
 }
 
-#' The mandatory download wording of SPEC.md S7.2, plus the one-click path to
-#' the S10 limitation it refers to. Called beside every download figure and
+#' The mandatory download wording, plus the one-click path to the limitation
+#' it refers to. Called beside every download figure and
 #' beside every headline download figure.
 #'
 #' `downloads.label` is reproduced verbatim, lower case included: it is the
@@ -488,7 +488,7 @@ zb_note <- function(text, class = "") {
 }
 
 #' The empty state. An empty section means "not collected yet", not "zero",
-#' and saying so is part of the degraded-publication contract (RNF-3).
+#' and saying so is part of the degraded-publication contract.
 zb_no_data <- function(text = tr("common.no_data")) {
   paste0('<p class="zb-empty">', zb_md_inline(text), "</p>")
 }
@@ -497,7 +497,7 @@ zb_no_data <- function(text = tr("common.no_data")) {
 
 # Okabe-Ito: distinguishable under the common colour-vision deficiencies.
 # Every chart pairs it with a second channel (line type, or a facet) so that
-# colour is never the only carrier (RNF-10).
+# colour is never the only carrier.
 zb_palette <- c(
   "#0072B2", "#D55E00", "#009E73", "#CC79A7",
   "#E69F00", "#56B4E9", "#7A4E9E", "#333333"
@@ -545,7 +545,7 @@ zb_fig <- function(plot, alt, caption = NULL, width = 9.2, height = 5, dpi = 132
 }
 
 #' The dateline every chart must carry: the date of its most recent datum,
-#' not the date of the build (SPEC.md S7.2).
+#' not the date of the build.
 zb_chart_dateline <- function(date) {
   if (is.null(date) || length(date) == 0L || is.na(date)) {
     tr("common.chart_undated")

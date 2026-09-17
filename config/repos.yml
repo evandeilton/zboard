@@ -23,8 +23,6 @@ github_repos:
     group: cran
   - repo: evandeilton/OptimalBinningWoE
     group: cran
-  - repo: evandeilton/dscoder
-    group: tools
   - repo: evandeilton/rnp
     group: tools
 

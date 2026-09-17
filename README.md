@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 [![collect](https://github.com/evandeilton/zboard/actions/workflows/collect.yml/badge.svg)](https://github.com/evandeilton/zboard/actions/workflows/collect.yml)
-[![test](https://github.com/evandeilton/zboard/actions/workflows/test.yml/badge.svg)](https://github.com/evandeilton/zboard/actions/workflows/test.yml)
+[![R-CMD-check](https://github.com/evandeilton/zboard/actions/workflows/test.yml/badge.svg)](https://github.com/evandeilton/zboard/actions/workflows/test.yml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 <!-- badges: end -->

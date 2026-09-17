@@ -1,4 +1,4 @@
-name: test
+name: R-CMD-check
 
 # Pull-request gate (SPEC.md §14).
 #

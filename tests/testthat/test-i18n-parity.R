@@ -1,5 +1,4 @@
-# SPEC.md S7.3: "CI falha se alguma chave existir em um idioma e faltar no
-# outro (teste `test-i18n-parity`)."
+# CI must fail if a key exists in one language and is missing in the other.
 #
 # The catalogue is `config/i18n.yml`: one top-level key per user-visible
 # string, each a mapping of the two supported languages. A key translated in
@@ -67,7 +66,7 @@ test_that("config/i18n.yml parses into a non-empty, flat catalogue", {
   expect_true(all(vapply(catalogue, is.list, logical(1))))
 })
 
-test_that("every key is translated into every language (SPEC.md S7.3)", {
+test_that("every key is translated into every language", {
   catalogue <- read_catalogue()
 
   present <- lapply(langs, function(lang) {
@@ -262,7 +261,7 @@ test_that("the Quarto navbar labels match their i18n keys", {
 })
 
 test_that("the Portuguese profile writes to the path the workflow publishes", {
-  # SPEC.md ADR-4 and .github/workflows/collect.yml: `/` is English and
+  # By design, and per .github/workflows/collect.yml: `/` is English and
   # `/pt/` is Portuguese. The EN profile inherits `output-dir` from the base
   # project file, the PT profile overrides it, and the build job renders EN
   # first because Quarto cleans its output directory.

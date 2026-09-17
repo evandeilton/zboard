@@ -1,6 +1,6 @@
 name: R-CMD-check
 
-# Pull-request gate (SPEC.md §14).
+# Pull-request gate.
 #
 # Two jobs:
 #   R-CMD-check - the standard r-lib/actions pipeline. `check-r-package` runs
@@ -61,7 +61,7 @@ jobs:
       - name: Check
         uses: r-lib/actions/check-r-package@465b7d8e732ca3921382b1674c59bada9cbf3399 # v2.13.0
         with:
-          # RNF-8 at the package level: a warning fails the build.
+          # At the package level a warning fails the build.
           error-on: '"warning"'
           upload-snapshots: true
 
@@ -89,7 +89,7 @@ jobs:
         shell: Rscript {0}
         run: |
           ## Deliberately NOT options(warn = 2): an empty data/ legitimately
-          ## warns. RNF-8 is enforced on the production pipeline (collect.yml)
+          ## warns. Warnings-as-errors is enforced on the production pipeline (collect.yml)
           ## and, for the package code itself, by error-on: warning above.
           zboard::export_json(data_dir = "data", output_dir = "site/_data")
           cat("Exported files:\n")

@@ -1,8 +1,8 @@
-# RNF-4: rollup -> prune, in that order, and the prune is ABANDONED when the
+# Retention order: rollup -> prune, in that order, and the prune is ABANDONED when the
 # rollup of the period did not succeed in the same call.
 #
-# This is the test SPEC.md S13 calls for ("Poda apaga tráfego antes do
-# rollup": low probability, high and irreversible impact). It is not enough
+# This guards the one failure that is low-probability but high-impact and
+# irreversible: pruning traffic before its rollup is on disk. It is not enough
 # to write the two steps in the right order and hope; the gate has to be
 # forced to fail. `zb_rollup_monthly()` is replaced with a function that
 # throws, and the test asserts that not a single daily row was removed.
@@ -60,7 +60,7 @@ test_that("the rollup runs before the prune and both happen on a healthy run", {
   expect_equal(june$clones, 3L)
 })
 
-test_that("a failing rollup ABORTS the prune for that table (RNF-4)", {
+test_that("a failing rollup ABORTS the prune for that table", {
   root <- withr::local_tempdir()
   staging <- file.path(root, "staging")
   data_dir <- file.path(root, "data")

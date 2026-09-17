@@ -1,4 +1,4 @@
-# RNF-5: two runs on the same day produce the same data state.
+# Idempotence: two runs on the same day produce the same data state.
 #
 # Synthetic data only: nothing here touches the network. Staging Parquet
 # files are written by hand into a temporary directory, so the test
@@ -108,7 +108,7 @@ test_that("consolidate() writes the expected tables from staging", {
   expect_false(file.exists(file.path(data_dir, "academic_works.parquet")))
 })
 
-test_that("two runs on the same day do not duplicate or change any row (RNF-5)", {
+test_that("two runs on the same day do not duplicate or change any row", {
   root <- withr::local_tempdir()
   staging <- file.path(root, "staging")
   data_dir <- file.path(root, "data")

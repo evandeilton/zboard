@@ -22,8 +22,9 @@ It runs unattended from GitHub Actions with no server and no database: Parquet
 files on an orphan `data` branch are the canonical store, a bilingual Quarto
 site is rebuilt from them every day and published to GitHub Pages.
 
-- **Live dashboard:** <https://evandeilton.github.io/zboard/> (English) ·
-  <https://evandeilton.github.io/zboard/pt/> (Portuguese)
+- **Live dashboard:** <https://evandeilton.github.io/zboard/dashboard/> (English) ·
+  <https://evandeilton.github.io/zboard/dashboard/pt/> (Portuguese)
+- **Package documentation:** <https://evandeilton.github.io/zboard/>
 
 ## Installation
 
@@ -124,13 +125,14 @@ for a backfill). Its jobs are, in order:
    upsert, monthly rollup, then pruning of the daily series to a 12-month
    window.
 3. **build** — exports the JSON, renders the site in both languages, writes
-   the badges and publishes to the `gh-pages` branch.
+   the badges and publishes them under `dashboard/` on the `gh-pages` branch.
 4. **alert** — opens, updates and closes GitHub issues (label `alert`) when a
    package's CRAN check turns to `WARN`/`ERROR`/`FAIL` or the package is
    archived.
 
-A second workflow runs `R CMD check` and a render smoke test on every pull
-request.
+Two more workflows run on every push and pull request: `R CMD check` with a
+render smoke test, and the pkgdown build of this documentation site, which is
+published at the root of the same `gh-pages` branch.
 
 To run it in your own fork, the repository needs:
 
@@ -138,7 +140,7 @@ To run it in your own fork, the repository needs:
   repositories in `config/repos.yml`;
 - the secret `OPENALEX_MAILTO`;
 - GitHub Pages enabled with *Deploy from a branch* → `gh-pages`, `/ (root)`.
-  The branch is created by the first successful `build` job.
+  The branch is created by the first successful deploy (pkgdown or `build`).
 
 ## Badges for package READMEs
 
@@ -147,13 +149,13 @@ package under `badges/` on the site: `<pkg>-downloads`, `<pkg>-check` and
 `<pkg>-version`. Use them in a package README as
 
 ```markdown
-![CRAN downloads](https://img.shields.io/endpoint?url=https://evandeilton.github.io/zboard/badges/gkwreg-downloads.json)
+![CRAN downloads](https://img.shields.io/endpoint?url=https://evandeilton.github.io/zboard/dashboard/badges/gkwreg-downloads.json)
 ```
 
 ## About the numbers
 
 The dashboard is descriptive, and its sources have limits that are stated on
-its [About page](https://evandeilton.github.io/zboard/about.html) in full.
+its [About page](https://evandeilton.github.io/zboard/dashboard/about.html) in full.
 In short: download counts come from a single CRAN mirror and are inflated by
 CI and bots, so they are a relative trend, not a total; each release produces
 a spike as binaries are rebuilt; GitHub traffic starts on the day collection

@@ -1,0 +1,38 @@
+url: https://evandeilton.github.io/zboard/
+
+template:
+  bootstrap: 5
+
+home:
+  title: "zboard: production monitoring for curated R packages"
+  links:
+    - text: Live dashboard (English)
+      href: https://evandeilton.github.io/zboard/dashboard/
+    - text: Painel (Português)
+      href: https://evandeilton.github.io/zboard/dashboard/pt/
+
+navbar:
+  structure:
+    left: [reference, news]
+    right: [dashboard, github]
+  components:
+    dashboard:
+      text: Dashboard
+      href: https://evandeilton.github.io/zboard/dashboard/
+
+reference:
+  - title: Collect
+    desc: One collector per source. Each writes staged Parquet tables and a run manifest.
+    contents:
+      - collect_cran
+      - collect_github
+      - collect_academic
+  - title: Consolidate and publish
+    desc: Merge the staged tables into the canonical store, then derive what the dashboard reads.
+    contents:
+      - consolidate
+      - export_json
+      - make_badges
+  - title: Alerts
+    contents:
+      - run_alerts

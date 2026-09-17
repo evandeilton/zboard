@@ -1,4 +1,4 @@
-# SPEC.md S4.2: gh_traffic merges by max() per (date, repo), never by
+# gh_traffic merges by max() per (date, repo), never by
 # last-write-wins.
 #
 # Why it matters: the GitHub traffic API returns a *partial* count for the

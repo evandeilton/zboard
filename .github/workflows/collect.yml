@@ -1,26 +1,26 @@
 name: collect
 
-# Daily production pipeline (SPEC.md §6):
+# Daily production pipeline:
 #
 #   collect (matrix: cran | github | academic)   <- isolated failure per source
 #        |
 #   consolidate (needs: collect, if: always())   <- upsert, rollup, prune, push `data`
 #        |
 #        +-- build  (export JSON, render EN + PT, badges, deploy gh-pages)
-#        +-- alert  (open/update/close issues per §8)
+#        +-- alert  (open/update/close issues)
 #
 # The package is installed once per job and every step is then a plain
 # `zboard::fn()` call, so the CI runs exactly the documented, tested API.
 
 on:
   # 06:15 UTC. Minute 0 of every hour concentrates the global Actions queue;
-  # offsetting reduces scheduling latency (SPEC.md §6).
+  # offsetting reduces scheduling latency.
   schedule:
     - cron: '15 6 * * *'
 
   # Backfill. Applies to cran_downloads, gh_activity and academic_works.
   # NOT applicable to gh_traffic: the GitHub traffic API retains 14 days and
-  # nothing more, which SPEC.md §6 records as a permanent limitation.
+  # nothing more, which is a permanent limitation of the source.
   workflow_dispatch:
     inputs:
       from:
@@ -40,14 +40,14 @@ on:
         default: ''
 
 # Two runs must never write the orphan `data` branch at the same time
-# (SPEC.md §6). Queue instead of cancelling: a cancelled run loses the
-# gh_traffic sample for that day, which is irrecoverable (§4.3).
+#. Queue instead of cancelling: a cancelled run loses the
+# gh_traffic sample for that day, which is irrecoverable.
 concurrency:
   group: collect
   cancel-in-progress: false
 
 # Least privilege at the workflow level; each job widens only what it needs
-# (SPEC.md §11). Note that a job-level `permissions:` block *replaces* this one
+#. Note that a job-level `permissions:` block *replaces* this one
 # wholesale, which is why the jobs below restate `contents: read`.
 permissions:
   contents: read
@@ -55,11 +55,11 @@ permissions:
 # NOTE: GITHUB_PAT is deliberately NOT set workflow-wide. The `gh` R package
 # resolves its token from GITHUB_PAT before GITHUB_TOKEN, so a workflow-level
 # GITHUB_PAT would silently shadow the fine-grained PAT in the `github` leg and
-# break the traffic endpoints, which need `Administration: read` (SPEC.md §11).
+# break the traffic endpoints, which need `Administration: read`.
 
 jobs:
   # ---------------------------------------------------------------------------
-  # collect - one leg per source, isolated failures (RNF-3)
+  # collect - one leg per source, isolated failures
   # ---------------------------------------------------------------------------
   collect:
     name: collect (${{ matrix.source }})
@@ -69,7 +69,7 @@ jobs:
       contents: read
 
     strategy:
-      # RNF-3: a failing source must not cancel the others.
+      # A failing source must not cancel the others.
       fail-fast: false
       matrix:
         source: [cran, github, academic]
@@ -104,7 +104,7 @@ jobs:
         if: env.LEG_ENABLED == 'true' && matrix.source == 'cran'
         shell: Rscript {0}
         run: |
-          options(warn = 2) # RNF-8
+          options(warn = 2)
           from <- Sys.getenv("BACKFILL_FROM")
           to <- Sys.getenv("BACKFILL_TO")
           zboard::collect_cran(
@@ -117,14 +117,14 @@ jobs:
         shell: Rscript {0}
         env:
           # Fine-grained PAT with `Administration: read`, required for the
-          # cross-repo traffic endpoints (SPEC.md §5, §11). Both variables are
+          # cross-repo traffic endpoints. Both variables are
           # set to the same value because `gh::gh_token()` prefers GITHUB_PAT
           # over GITHUB_TOKEN - leaving GITHUB_PAT unset elsewhere would be
           # enough today, but setting both here is immune to that ordering.
           GITHUB_TOKEN: ${{ secrets.GH_FINE_GRAINED_PAT }}
           GITHUB_PAT: ${{ secrets.GH_FINE_GRAINED_PAT }}
         run: |
-          options(warn = 2) # RNF-8
+          options(warn = 2)
           from <- Sys.getenv("BACKFILL_FROM")
           to <- Sys.getenv("BACKFILL_TO")
           zboard::collect_github(
@@ -137,10 +137,10 @@ jobs:
         shell: Rscript {0}
         env:
           # OpenAlex polite pool. Never written to a versioned file or to the
-          # generated HTML (SPEC.md §11).
+          # generated HTML.
           OPENALEX_MAILTO: ${{ secrets.OPENALEX_MAILTO }}
         run: |
-          options(warn = 2) # RNF-8
+          options(warn = 2)
           from <- Sys.getenv("BACKFILL_FROM")
           to <- Sys.getenv("BACKFILL_TO")
           zboard::collect_academic(
@@ -165,12 +165,12 @@ jobs:
     name: consolidate
     needs: collect
     # Runs even when a collect leg failed: the pipeline degrades partially
-    # instead of stalling (RNF-3, SPEC.md §6).
+    # instead of stalling.
     if: always()
     runs-on: ubuntu-latest
 
     permissions:
-      # SPEC.md §11: `contents: write` for the `data` branch.
+      # `contents: write`: this job pushes the `data` branch.
       contents: write
 
     steps:
@@ -192,13 +192,13 @@ jobs:
         run: |
           set -euo pipefail
           # download-artifact treats "pattern matched nothing" as a successful
-          # no-op, which is exactly the RNF-3 path where every collect leg
+          # no-op, which is exactly the degraded path where every collect leg
           # failed. Guarantee the directory exists so consolidate() always sees
           # a well-formed, possibly empty, staging area.
           mkdir -p staging
           ls -la staging
           if [ -z "$(ls -A staging)" ]; then
-            echo "::notice title=Empty staging::No collector produced a parquet file this run; consolidating existing data only (RNF-3)."
+            echo "::notice title=Empty staging::No collector produced a parquet file this run; consolidating existing data only."
           fi
 
       - name: Check out (or bootstrap) the orphan `data` branch into ./data
@@ -232,12 +232,12 @@ jobs:
       - name: Consolidate (upsert -> rollup -> prune)
         shell: Rscript {0}
         run: |
-          options(warn = 2) # RNF-8
+          options(warn = 2)
           zboard::consolidate(staging_dir = "staging", data_dir = "data")
 
       - name: Monitor the size of the data payload
-        # RNF-9. Measures the working tree rather than the branch history, which
-        # is the number that actually grows with retention policy (§4.3).
+        # Size guard. Measures the working tree rather than the branch history, which
+        # is the number that actually grows with retention policy.
         if: always()
         shell: bash
         run: |
@@ -247,7 +247,7 @@ jobs:
           size_mb="$(du -sm ./data 2>/dev/null | cut -f1)" || size_mb=""
           echo "data/ working tree: ${size_mb:-unavailable} MB"
           if [ "${size_mb:-0}" -gt 200 ]; then
-            echo "::warning title=RNF-9::The 'data' payload is ${size_mb} MB, above the 200 MB threshold."
+            echo "::warning title=Data branch size::The 'data' payload is ${size_mb} MB, above the 200 MB threshold."
           fi
 
       - name: Commit and push the `data` branch
@@ -257,7 +257,7 @@ jobs:
           set -euo pipefail
           git add -A
           if git diff --cached --quiet; then
-            echo "::notice title=No data change::Nothing to commit; skipping the push. A same-day re-run is a no-op (RNF-5)."
+            echo "::notice title=No data change::Nothing to commit; skipping the push. A same-day re-run is a no-op."
             exit 0
           fi
           git commit \
@@ -273,14 +273,11 @@ jobs:
     needs: consolidate
     runs-on: ubuntu-latest
 
-    # SPEC.md §11 states "`contents: write` only in the `consolidate` job", but
-    # §14 lists `gh-pages` as a real branch of this repository. A Pages deploy
-    # that pushes to a branch cannot happen without write access, so the two
-    # sentences are strictly incompatible. Resolved in favour of §14: the branch
-    # architecture is the more concrete, more specific statement. Write access is
-    # therefore granted here as well, scoped to this job only. If §11 is meant
-    # literally, the alternative is to switch to the Pages deployment API
-    # (`pages: write` + `id-token: write`) and drop the `gh-pages` branch.
+    # The deploy below pushes to the `gh-pages` branch, which cannot happen
+    # without `contents: write`; the permission is therefore granted here as
+    # well, scoped to this job only. The alternative, if write access is to
+    # stay confined to the `consolidate` job, is the Pages deployment API
+    # (`pages: write` + `id-token: write`) with no `gh-pages` branch.
     permissions:
       contents: write
 
@@ -292,7 +289,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         # Must not block the build: export_json() handles an empty data dir, and
         # publishing a partially populated dashboard is the intended degraded
-        # behaviour (RNF-3).
+        # behaviour.
         continue-on-error: true
         with:
           ref: data
@@ -306,7 +303,7 @@ jobs:
       - name: Export JSON for the front-end
         shell: Rscript {0}
         run: |
-          options(warn = 2) # RNF-8
+          options(warn = 2)
           zboard::export_json(data_dir = "data", output_dir = "site/_data")
 
       - name: Render English site to _site/
@@ -315,15 +312,15 @@ jobs:
       - name: Render Portuguese site to _site/pt/
         # `_quarto-pt.yml` sets `output-dir: _site/pt`. EN must be rendered
         # first: Quarto cleans its output directory, so rendering EN into
-        # `_site/` afterwards would delete `_site/pt/` (SPEC.md ADR-4).
+        # `_site/` afterwards would delete `_site/pt/`.
         run: quarto render site --profile pt
 
       - name: Generate shields.io endpoint badges
         # After both renders, for the same reason: badges written into `_site/`
-        # before a render would be wiped by it (SPEC.md §7.4).
+        # before a render would be wiped by it.
         shell: Rscript {0}
         run: |
-          options(warn = 2) # RNF-8
+          options(warn = 2)
           zboard::make_badges(data_dir = "data", output_dir = "_site/badges")
 
       - name: Deploy to gh-pages
@@ -333,6 +330,11 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
           publish_branch: gh-pages
+          # The pkgdown site (pkgdown.yaml) owns the branch root; the dashboard
+          # lives under `dashboard/`, and `keep_files` stops this deploy from
+          # deleting the pkgdown files (and vice versa).
+          destination_dir: dashboard
+          keep_files: true
           user_name: 'github-actions[bot]'
           user_email: '41898282+github-actions[bot]@users.noreply.github.com'
           commit_message: 'site: build from ${{ github.sha }}'
@@ -341,7 +343,7 @@ jobs:
           # asset directories.
 
   # ---------------------------------------------------------------------------
-  # alert - issues for CRAN check regressions and archival (SPEC.md §8)
+  # alert - issues for CRAN check regressions and archival
   # ---------------------------------------------------------------------------
   alert:
     name: alert
@@ -350,7 +352,7 @@ jobs:
 
     permissions:
       contents: read
-      # SPEC.md §11: `issues: write` only here.
+      # `issues: write` is granted only here.
       issues: write
 
     steps:
@@ -371,9 +373,9 @@ jobs:
         shell: Rscript {0}
         env:
           # The automatic Actions token suffices: alerts only open, comment on
-          # and close issues in this repository (SPEC.md §8). GITHUB_REPOSITORY
+          # and close issues in this repository. GITHUB_REPOSITORY
           # is provided by the runner, and both are the defaults of run_alerts().
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          options(warn = 2) # RNF-8
+          options(warn = 2)
           zboard::run_alerts()

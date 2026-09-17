@@ -1,0 +1,205 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Reading in EnglishLer esta página em Português\nMost recent datum: Sep 17, 2026Page built on Sep 17, 2026, 17:27 UTC. Every figure below is dated by its data, never by this build.\nWhat this dashboard measures, where the numbers come from, what they cannot support, and under which licence they are published."
+  },
+  {
+    "objectID": "about.html#purpose",
+    "href": "about.html#purpose",
+    "title": "About",
+    "section": "Purpose",
+    "text": "Purpose\nA static dashboard, updated daily and without a server, consolidating in one place the health of the R packages published on CRAN, their download history, development activity in the curated GitHub repositories, and the associated academic output. It serves two purposes at once: operational, detecting a CRAN regression before the official notification, and showcase, as a public portfolio artefact."
+  },
+  {
+    "objectID": "about.html#methodology",
+    "href": "about.html#methodology",
+    "title": "About",
+    "section": "Methodology",
+    "text": "Methodology\nA scheduled job collects each source independently once a day, writes the result to a typed, columnar store, and derives from it the JSON this page reads. A failing source degrades only its own section; the rest of the dashboard still publishes with the data available. Writes are idempotent by natural key, so re-running the pipeline on the same day does not duplicate a row. Only official APIs and artefacts are used: no HTML is scraped.\nThe set of packages and repositories is curated explicitly in config/repos.yml. Anything not listed there is not collected, not aggregated and not displayed: curation is an editorial decision, not a display filter.\nDaily granularity is retained for a rolling twelve months; a monthly rollup is kept permanently. The rollup is written before any pruning, and pruning is aborted if the rollup fails, because repository traffic is the one series that cannot be reconstructed.\nOnly aggregates per package and per repository are published. No contributor profile, issue author or e-mail address is collected.\n\nData sources\n\n\n\n\n\nSource\n\n\nEndpoint or function\n\n\nAuthentication\n\n\nRetroactive\n\n\nRate limit\n\n\n\n\n\n\nCRAN downloads\n\n\ncranlogs::cran_downloads() → cranlogs.r-pkg.org\n\n\nnone\n\n\nyes, since 2012-10\n\n\ncourtesy; at most 1 request per package per day\n\n\n\n\nVersions and metadata\n\n\ncrandb.r-pkg.org/{pkg}/all\n\n\nnone\n\n\nyes\n\n\ncourtesy\n\n\n\n\nCheck results\n\n\ntools::CRAN_check_results(), reading the official .rds\n\n\nnone\n\n\nno\n\n\n1 request per day\n\n\n\n\nArchival status\n\n\ntools::CRAN_package_db() plus the Archive/ index\n\n\nnone\n\n\nno\n\n\n1 request per day\n\n\n\n\nGitHub activity\n\n\nGraphQL v4: repository{…}, contributionsCollection\n\n\nfine-grained personal access token\n\n\nyes\n\n\n5,000 points per hour\n\n\n\n\nGitHub traffic\n\n\nREST /repos/{owner}/{repo}/traffic/{views,clones}\n\n\ntoken with Administration: read\n\n\nno — 14 days only\n\n\n5,000 requests per hour\n\n\n\n\nAcademic output\n\n\nOpenAlex api.openalex.org/works?filter=author.orcid:…\n\n\ne-mail address, polite pool\n\n\nyes\n\n\nabout 100,000 requests per day"
+  },
+  {
+    "objectID": "about.html#limitations",
+    "href": "about.html#limitations",
+    "title": "About",
+    "section": "Declared limitations",
+    "text": "Declared limitations\nMethodological transparency is a requirement, not a courtesy. The text below is normative and is published in both languages.\n\n1. Downloads are not a census.\nThe series reflects exclusively the cloud.r-project.org (Posit) mirror. There is no known inclusion probability for the remaining mirrors; therefore no unbiased estimator of the total number of downloads exists. Use the series for relative trend, never as an absolute level.\n\n\n2. Contamination by automation.\nCRAN check farms, Docker images and third-party CI pipelines inflate the count. In niche packages, the non-human fraction may be the majority.\n\n\n3. Release artefact.\nEvery new version produces a jump of several times the baseline, caused by the rebuilding of Windows and macOS binaries. The release markers on the chart exist to make that artefact visible — not to correct it.\n\n\n4. Traffic with a truncated start.\nThe series begins on the date of the first collection; the period before it is inaccessible by design of the API.\n\n\n5. Citations with a lag.\nOpenAlex counts have an indexing latency of weeks to months and incomplete coverage for software."
+  },
+  {
+    "objectID": "about.html#what-this-dashboard-deliberately-does-not-do",
+    "href": "about.html#what-this-dashboard-deliberately-does-not-do",
+    "title": "About",
+    "section": "What this dashboard deliberately does not do",
+    "text": "What this dashboard deliberately does not do\nNo modelling, forecasting or anomaly detection. The dashboard is descriptive. CRAN download series are a convenience sample from a single mirror, contaminated by continuous integration and bots; modelling them would produce inference with no external validity.\nNo commit-count ranking or target as a headline indicator. The metric is subject to Goodhart’s law: it measures typing volume, not production. Commits appear only as a secondary series on the GitHub page.\nNo collection of identifiable third-party data. Contributor profiles and issue e-mail addresses are out of scope; only per-repository aggregates are published."
+  },
+  {
+    "objectID": "about.html#licence",
+    "href": "about.html#licence",
+    "title": "About",
+    "section": "Licence",
+    "text": "Licence\nCode is published under the MIT licence. The aggregated data published on this site is available under CC-BY-4.0. Upstream data remains subject to the terms of its own provider: CRAN, GitHub and OpenAlex."
+  },
+  {
+    "objectID": "about.html#source-code",
+    "href": "about.html#source-code",
+    "title": "About",
+    "section": "Source code",
+    "text": "Source code\nThe collectors, the consolidation pipeline and this site live in a single open-source repository.\n\nevandeilton/zboard on GitHub\nReport a problem with this dashboard\n\nCorrections, questions about the methodology and bug reports belong in the repository’s issue tracker, where the discussion stays public and auditable."
+  },
+  {
+    "objectID": "about.html#this-build",
+    "href": "about.html#this-build",
+    "title": "About",
+    "section": "This build",
+    "text": "This build\n\n\n\n\n\nField\n\n\nValue\n\n\n\n\n\n\nJSON generated at\n\n\nSep 17, 2026, 17:27 UTC\n\n\n\n\nMost recent datum\n\n\nSep 17, 2026\n\n\n\n\nData schema version\n\n\n1\n\n\n\n\nPipeline version\n\n\n0.0.0.9000\n\n\n\n\nDaily retention, in months\n\n\n12\n\n\n\n\n\n\n\n\nRows stored per table\n\n\n\n\nTable\n\n\nRows\n\n\nMost recent datum\n\n\n\n\n\n\ncran_downloads\n\n\n140\n\n\nSep 16, 2026\n\n\n\n\ncran_versions\n\n\n20\n\n\nAug 31, 2026\n\n\n\n\ncran_checks\n\n\n52\n\n\nSep 17, 2026\n\n\n\n\ncran_status\n\n\n4\n\n\nSep 17, 2026\n\n\n\n\ngh_activity\n\n\n0\n\n\nunknown\n\n\n\n\ngh_repo_snapshot\n\n\n0\n\n\nunknown\n\n\n\n\ngh_traffic\n\n\n0\n\n\nunknown\n\n\n\n\ngh_releases\n\n\n0\n\n\nunknown\n\n\n\n\nacademic_works\n\n\n9\n\n\nSep 17, 2026\n\n\n\n\nrun_manifest\n\n\n10\n\n\nSep 17, 2026"
+  },
+  {
+    "objectID": "github.html",
+    "href": "github.html",
+    "title": "GitHub",
+    "section": "",
+    "text": "Reading in EnglishLer esta página em Português\nMost recent datum: not available yetPage built on Sep 17, 2026, 17:27 UTC. Every figure below is dated by its data, never by this build.\nState of each curated repository, issue and pull-request activity, traffic since collection began, and commits as a secondary series.\nⓘ Aggregates per repository only. No issue title, no author, no e-mail address is collected or published."
+  },
+  {
+    "objectID": "github.html#repository-state",
+    "href": "github.html#repository-state",
+    "title": "GitHub",
+    "section": "Repository state",
+    "text": "Repository state\n\nNo repository snapshot has been collected yet."
+  },
+  {
+    "objectID": "github.html#age-of-the-oldest-open-issue",
+    "href": "github.html#age-of-the-oldest-open-issue",
+    "title": "GitHub",
+    "section": "Age of the oldest open issue",
+    "text": "Age of the oldest open issue\nAge, not count: an old open issue is a signal, a large backlog of fresh ones usually is not.\n\nNo repository currently has an open issue."
+  },
+  {
+    "objectID": "github.html#issue-and-pull-request-activity",
+    "href": "github.html#issue-and-pull-request-activity",
+    "title": "GitHub",
+    "section": "Issue and pull-request activity",
+    "text": "Issue and pull-request activity\nDaily counts per repository. Merged and closed pull requests are disjoint: a merged pull request is counted only as merged.\n\nNo GitHub activity has been collected yet."
+  },
+  {
+    "objectID": "github.html#traffic",
+    "href": "github.html#traffic",
+    "title": "GitHub",
+    "section": "Traffic",
+    "text": "Traffic\nViews and clones per repository. The GitHub traffic API retains fourteen days and nothing more, so this series is the only long-term copy of the data and it starts on the day collection began.\n\nNo traffic has been collected yet."
+  },
+  {
+    "objectID": "github.html#releases",
+    "href": "github.html#releases",
+    "title": "GitHub",
+    "section": "Releases",
+    "text": "Releases\nPermanent table, newest first.\n\nNo release has been collected yet."
+  },
+  {
+    "objectID": "github.html#commits-secondary-series",
+    "href": "github.html#commits-secondary-series",
+    "title": "GitHub",
+    "section": "Commits, secondary series",
+    "text": "Commits, secondary series\nPublished here and nowhere else, deliberately. Raw commit volume is subject to Goodhart’s law: it measures typing, not production. It is shown as one series among others, never as a headline figure, and the dashboard sets no target and tracks no streak.\n\nNo commit series has been collected yet."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Overview",
+    "section": "",
+    "text": "Reading in EnglishLer esta página em Português\nMost recent datum: Sep 17, 2026Page built on Sep 17, 2026, 17:27 UTC. Every figure below is dated by its data, never by this build.\nState of every curated CRAN package and GitHub repository: worst check status, recent download sample, open issues and the last release."
+  },
+  {
+    "objectID": "index.html#at-a-glance",
+    "href": "index.html#at-a-glance",
+    "title": "Overview",
+    "section": "At a glance",
+    "text": "At a glance\n\n\n\n4\n\n\nCRAN packages monitored\n\n\n\n\n0\n\n\nGitHub repositories monitored\n\n\n\n\n1,882\n\n\nDownloads, last 30 days\n\n\ndownloads from the Posit mirror (partial sample). Why this is a partial sample and not a download total.\n\n\n\n\n0\n\n\nOpen issues\n\n\n\n\n0\n\n\nOpen pull requests\n\n\n\n\n9\n\n\nAcademic works\n\n\n\n\n0\n\n\nCitations indexed by OpenAlex\n\n\nSee the declared limitations.\n\n\n\n\nⓘ Commit counts appear nowhere on this page, by design. Raw commit volume measures typing, not production, and a headline built on it invites Goodhart’s law. Commits are published only as a secondary series on the GitHub page."
+  },
+  {
+    "objectID": "index.html#package-status",
+    "href": "index.html#package-status",
+    "title": "Overview",
+    "section": "Package status",
+    "text": "Package status\n\nⓘ Snapshot of Sep 17, 2026\n\n\n\n\n\nbetaregscale\n\n✓OK, check status: check passed on every flavour\n\n\n0 of 13 flavours outside OK\n\n\n\n\nCRAN version\n\n\n2.7.4published Aug 23, 2026\n\n\n\n\nLast 30 days\n\n\n355Change vs. the previous 30 days: +1,379.2%\n\n\n\n\nOpen issues\n\n\nunknown\n\n\n\n\nOpen PRs\n\n\nunknown\n\n\n\n\nStars\n\n\nunknown\n\n\n\n\nLast release\n\n\nno release recorded\n\n\n\n\nno curated repository\n\n\n\n\n\ngkwdist\n\n✓OK, check status: check passed on every flavour\n\n\n0 of 13 flavours outside OK\n\n\n\n\nCRAN version\n\n\n1.1.5published Aug 23, 2026\n\n\n\n\nLast 30 days\n\n\n442Change vs. the previous 30 days: +978.0%\n\n\n\n\nOpen issues\n\n\nunknown\n\n\n\n\nOpen PRs\n\n\nunknown\n\n\n\n\nStars\n\n\nunknown\n\n\n\n\nLast release\n\n\nno release recorded\n\n\n\n\nno curated repository\n\n\n\n\n\ngkwreg\n\n✓OK, check status: check passed on every flavour\n\n\n0 of 13 flavours outside OK\n\n\n\n\nCRAN version\n\n\n2.1.18published Aug 24, 2026\n\n\n\n\nLast 30 days\n\n\n589Change vs. the previous 30 days: +1,491.9%\n\n\n\n\nOpen issues\n\n\nunknown\n\n\n\n\nOpen PRs\n\n\nunknown\n\n\n\n\nStars\n\n\nunknown\n\n\n\n\nLast release\n\n\nno release recorded\n\n\n\n\nno curated repository\n\n\n\n\n\nOptimalBinningWoE\n\n✓OK, check status: check passed on every flavour\n\n\n0 of 13 flavours outside OK\n\n\n\n\nCRAN version\n\n\n1.13.5published Aug 31, 2026\n\n\n\n\nLast 30 days\n\n\n496Change vs. the previous 30 days: +2,380.0%\n\n\n\n\nOpen issues\n\n\nunknown\n\n\n\n\nOpen PRs\n\n\nunknown\n\n\n\n\nStars\n\n\nunknown\n\n\n\n\nLast release\n\n\nno release recorded\n\n\n\n\nno curated repository"
+  },
+  {
+    "objectID": "index.html#source-freshness",
+    "href": "index.html#source-freshness",
+    "title": "Overview",
+    "section": "Source freshness",
+    "text": "Source freshness\nLast recorded run of each collector. A stale or failed source degrades that section of the dashboard without blocking the rest.\n\n\n\n\n\nSource\n\n\nStatus\n\n\nLast run\n\n\nAge\n\n\nRows written\n\n\nMessage\n\n\n\n\n\n\nacademic_works\n\n\n✓OK\n\n\nSep 17, 2026, 17:08 UTC\n\n\n0.3 h\n\n\n9\n\n\nnone\n\n\n\n\nconsolidate\n\n\n✓OK\n\n\nSep 17, 2026, 17:19 UTC\n\n\n0.1 h\n\n\n225\n\n\nnone\n\n\n\n\ncran_checks\n\n\n✓OK\n\n\nSep 17, 2026, 17:09 UTC\n\n\n0.3 h\n\n\n52\n\n\nnone\n\n\n\n\ncran_downloads\n\n\n✓OK\n\n\nSep 17, 2026, 17:09 UTC\n\n\n0.3 h\n\n\n140\n\n\nnone\n\n\n\n\ncran_status\n\n\n✓OK\n\n\nSep 17, 2026, 17:09 UTC\n\n\n0.3 h\n\n\n4\n\n\nnone\n\n\n\n\ncran_versions\n\n\n✓OK\n\n\nSep 17, 2026, 17:09 UTC\n\n\n0.3 h\n\n\n20\n\n\nnone\n\n\n\n\ngh_activity\n\n\n✕FAILED\n\n\nSep 17, 2026, 17:09 UTC\n\n\n0.3 h\n\n\n0\n\n\nevandeilton/gkwreg: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/gkwdist: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/betaregscale: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/OptimalBinningWoE: GitHub API error (403): API rate …\n\n\n\n\ngh_releases\n\n\n✕FAILED\n\n\nSep 17, 2026, 17:09 UTC\n\n\n0.3 h\n\n\n0\n\n\nevandeilton/gkwreg: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/gkwdist: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/betaregscale: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/OptimalBinningWoE: GitHub API error (403): API rate …\n\n\n\n\ngh_repo_snapshot\n\n\n✕FAILED\n\n\nSep 17, 2026, 17:09 UTC\n\n\n0.3 h\n\n\n0\n\n\nevandeilton/gkwreg: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/gkwdist: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/betaregscale: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/OptimalBinningWoE: GitHub API error (403): API rate …\n\n\n\n\ngh_traffic\n\n\n✕FAILED\n\n\nSep 17, 2026, 17:09 UTC\n\n\n0.3 h\n\n\n0\n\n\nevandeilton/gkwreg: GitHub API error (401): Requires authentication ℹ Read more at &lt;https://docs.github.com/rest&gt;; evandeilton/gkwdist: GitHub API error (401): Requires authentication ℹ Read more at &lt;https://docs.github.com/rest&gt;; evandeilton/betaregscale: GitHub API error (401): Requires authentication ℹ Read more at &lt;https://docs.github.com/rest&gt;; evandeilton/OptimalBinningWoE: GitHub API error (401): Requires authentication ℹ Read more at &lt;https://docs.github.com/rest&gt;; evandeilton/rnp: Gi…"
+  },
+  {
+    "objectID": "cran.html",
+    "href": "cran.html",
+    "title": "CRAN",
+    "section": "",
+    "text": "Reading in EnglishLer esta página em Português\nMost recent datum: Sep 16, 2026Page built on Sep 17, 2026, 17:27 UTC. Every figure below is dated by its data, never by this build.\nCheck status by package and flavour, the daily download sample with release markers, and the complete version history."
+  },
+  {
+    "objectID": "cran.html#package-status",
+    "href": "cran.html#package-status",
+    "title": "CRAN",
+    "section": "Package status",
+    "text": "Package status\n\n\n\nSnapshot of Sep 17, 2026\n\n\n\n\nPackage\n\n\nWorst status\n\n\nFlavours checked\n\n\nFlavours outside OK\n\n\nOn CRAN\n\n\nArchived\n\n\nMaintainer\n\n\n\n\n\n\nbetaregscale\n\n\n✓OK, check status: check passed on every flavour\n\n\n13\n\n\n0\n\n\nyes\n\n\nno\n\n\nJosé Evandeilton Lopes\n\n\n\n\ngkwdist\n\n\n✓OK, check status: check passed on every flavour\n\n\n13\n\n\n0\n\n\nyes\n\n\nno\n\n\nJosé Evandeilton Lopes\n\n\n\n\ngkwreg\n\n\n✓OK, check status: check passed on every flavour\n\n\n13\n\n\n0\n\n\nyes\n\n\nno\n\n\nJosé Evandeilton Lopes\n\n\n\n\nOptimalBinningWoE\n\n\n✓OK, check status: check passed on every flavour\n\n\n13\n\n\n0\n\n\nyes\n\n\nno\n\n\nJosé Evandeilton Lopes"
+  },
+  {
+    "objectID": "cran.html#check-status-by-package-and-flavour",
+    "href": "cran.html#check-status-by-package-and-flavour",
+    "title": "CRAN",
+    "section": "Check status by package and flavour",
+    "text": "Check status by package and flavour\nOne column per CRAN check flavour, latest snapshot only. Status is given as text, never by colour alone.\n\n\n\nSnapshot of Sep 17, 2026\n\n\n\n\nFlavour\n\n\nbetaregscale\n\n\ngkwdist\n\n\ngkwreg\n\n\nOptimalBinningWoE\n\n\n\n\n\n\nr-devel-linux-x86_64-debian-clang\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-devel-linux-x86_64-debian-gcc\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-devel-linux-x86_64-fedora-clang\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-devel-linux-x86_64-fedora-gcc\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-devel-windows-x86_64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-oldrel-macos-arm64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-oldrel-macos-x86_64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-oldrel-windows-x86_64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-patched-linux-x86_64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-release-linux-x86_64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-release-macos-arm64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-release-macos-x86_64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\nr-release-windows-x86_64\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n✓OK, check status: check passed on every flavour\n\n\n\n\n\n\n\n\nCheck time (s)\n\n\n\n\nPackage\n\n\nVersion\n\n\nCheck time (s)\n\n\n\n\n\n\nbetaregscale\n\n\n2.7.4\n\n\n175.5\n\n\n\n\ngkwdist\n\n\n1.1.5\n\n\n129.4\n\n\n\n\ngkwreg\n\n\n2.1.18\n\n\n180.0\n\n\n\n\nOptimalBinningWoE\n\n\n1.13.5\n\n\n182.0"
+  },
+  {
+    "objectID": "cran.html#daily-downloads",
+    "href": "cran.html#daily-downloads",
+    "title": "CRAN",
+    "section": "Daily downloads",
+    "text": "Daily downloads\n\nⓘ downloads from the Posit mirror (partial sample). Why this is a partial sample and not a download total.\n\n\n\n\nChart data up to Sep 16, 2026. Exported window: Sep 17, 2025 to Sep 16, 2026.\n\n\n\nⓘ The dashed vertical lines mark CRAN releases. Each one is followed by a jump of several times the baseline, produced by the rebuilding of Windows and macOS binaries. The markers exist to make that artefact visible, not to correct it.\n\n\n\n\nDownload sample per package — downloads from the Posit mirror (partial sample)\n\n\n\n\nPackage\n\n\nDownloads\n\n\n\n\n\n\nbetaregscale\n\n\n379\n\n\n\n\ngkwdist\n\n\n483\n\n\n\n\ngkwreg\n\n\n626\n\n\n\n\nOptimalBinningWoE\n\n\n516"
+  },
+  {
+    "objectID": "cran.html#permanent-monthly-archive",
+    "href": "cran.html#permanent-monthly-archive",
+    "title": "CRAN",
+    "section": "Permanent monthly archive",
+    "text": "Permanent monthly archive\nMonthly rollup, kept indefinitely. The daily series above is pruned to a rolling 12-month window.\n\nⓘ downloads from the Posit mirror (partial sample). Why this is a partial sample and not a download total.\n\n\n\n\nChart data up to Sep 1, 2026.\n\n\n\n\n\nPermanent monthly archive — downloads from the Posit mirror (partial sample)\n\n\n\n\nMonth\n\n\nPackage\n\n\nDownloads\n\n\n\n\n\n\nAug 2026\n\n\nbetaregscale\n\n\n213\n\n\n\n\nAug 2026\n\n\ngkwdist\n\n\n295\n\n\n\n\nAug 2026\n\n\ngkwreg\n\n\n442\n\n\n\n\nAug 2026\n\n\nOptimalBinningWoE\n\n\n267\n\n\n\n\nSep 2026\n\n\nbetaregscale\n\n\n166\n\n\n\n\nSep 2026\n\n\ngkwdist\n\n\n188\n\n\n\n\nSep 2026\n\n\ngkwreg\n\n\n184\n\n\n\n\nSep 2026\n\n\nOptimalBinningWoE\n\n\n249"
+  },
+  {
+    "objectID": "cran.html#version-history",
+    "href": "cran.html#version-history",
+    "title": "CRAN",
+    "section": "Version history",
+    "text": "Version history\nPermanent table: every version published to CRAN, newest first.\n\n\n\n\n\nPackage\n\n\nVersion\n\n\nRelease date\n\n\nCurrent\n\n\n\n\n\n\nOptimalBinningWoE\n\n\n1.13.5\n\n\nAug 31, 2026\n\n\nyes\n\n\n\n\nOptimalBinningWoE\n\n\n1.13.4\n\n\nAug 26, 2026\n\n\nno\n\n\n\n\nOptimalBinningWoE\n\n\n1.13.3\n\n\nAug 23, 2026\n\n\nno\n\n\n\n\nOptimalBinningWoE\n\n\n1.0.8\n\n\nJan 29, 2026\n\n\nno\n\n\n\n\nOptimalBinningWoE\n\n\n1.0.3\n\n\nJan 23, 2026\n\n\nno\n\n\n\n\nbetaregscale\n\n\n2.7.4\n\n\nAug 23, 2026\n\n\nyes\n\n\n\n\nbetaregscale\n\n\n2.6.9\n\n\nFeb 25, 2026\n\n\nno\n\n\n\n\ngkwdist\n\n\n1.1.5\n\n\nAug 23, 2026\n\n\nyes\n\n\n\n\ngkwdist\n\n\n1.1.4\n\n\nMay 28, 2026\n\n\nno\n\n\n\n\ngkwdist\n\n\n1.1.3\n\n\nMay 21, 2026\n\n\nno\n\n\n\n\ngkwdist\n\n\n1.1.2\n\n\nJan 8, 2026\n\n\nno\n\n\n\n\ngkwdist\n\n\n1.1.1\n\n\nNov 27, 2025\n\n\nno\n\n\n\n\ngkwdist\n\n\n1.0.10\n\n\nNov 13, 2025\n\n\nno\n\n\n\n\ngkwreg\n\n\n2.1.18\n\n\nAug 24, 2026\n\n\nyes\n\n\n\n\ngkwreg\n\n\n2.1.14\n\n\nJan 9, 2026\n\n\nno\n\n\n\n\ngkwreg\n\n\n2.1.6\n\n\nNov 27, 2025\n\n\nno\n\n\n\n\ngkwreg\n\n\n2.1.1\n\n\nNov 15, 2025\n\n\nno\n\n\n\n\ngkwreg\n\n\n1.0.10\n\n\nJul 9, 2025\n\n\nno\n\n\n\n\ngkwreg\n\n\n1.0.7\n\n\nMay 1, 2025\n\n\nno\n\n\n\n\ngkwreg\n\n\n1.0.3\n\n\nApr 15, 2025\n\n\nno"
+  },
+  {
+    "objectID": "academic.html",
+    "href": "academic.html",
+    "title": "Academic",
+    "section": "",
+    "text": "Reading in EnglishLer esta página em Português\nMost recent datum: Sep 17, 2026Page built on Sep 17, 2026, 17:27 UTC. Every figure below is dated by its data, never by this build.\nPublications, software and preprints attributed to the configured ORCID iD, with citation counts as indexed by OpenAlex.\nⓘ Citation counts lag indexing by weeks to months and OpenAlex coverage of research software is incomplete. Treat every number on this page as a lower bound."
+  },
+  {
+    "objectID": "academic.html#works-and-citations-by-year",
+    "href": "academic.html#works-and-citations-by-year",
+    "title": "Academic",
+    "section": "Works and citations by year",
+    "text": "Works and citations by year\n\n\n\nChart data up to Sep 17, 2026.\n\n\n\n\n\n\n\nYear\n\n\nWorks\n\n\nCitations\n\n\n\n\n\n\n2023\n\n\n1\n\n\n0\n\n\n\n\n2025\n\n\n2\n\n\n0\n\n\n\n\n2026\n\n\n6\n\n\n0"
+  },
+  {
+    "objectID": "academic.html#works-and-citations-by-type",
+    "href": "academic.html#works-and-citations-by-type",
+    "title": "Academic",
+    "section": "Works and citations by type",
+    "text": "Works and citations by type\n\n\n\n\n\nType\n\n\nWorks\n\n\nCitations\n\n\n\n\n\n\narticle\n\n\n1\n\n\n0\n\n\n\n\ndataset\n\n\n4\n\n\n0\n\n\n\n\ndissertation\n\n\n1\n\n\n0\n\n\n\n\nsoftware\n\n\n3\n\n\n0\n\n\n\n\n\n\nⓘ The type is OpenAlex’s own vocabulary, passed through unchanged."
+  },
+  {
+    "objectID": "academic.html#works",
+    "href": "academic.html#works",
+    "title": "Academic",
+    "section": "Works",
+    "text": "Works\n\n\n\nSnapshot of Sep 17, 2026\n\n\n\n\nTitle\n\n\nType\n\n\nVenue\n\n\nYear\n\n\nCitations\n\n\n\n\n\n\nevandeilton/gkwreg: gkwreg 2.1.17\n\n\nsoftware\n\n\nZenodo (CERN European Organization for Nuclear Research)\n\n\n2026\n\n\n0\n\n\n\n\ngkwreg: An R Package for Generalized Kumaraswamy Regression Models for Bounded Data\n\n\nsoftware\n\n\nZenodo (CERN European Organization for Nuclear Research)\n\n\n2026\n\n\n0\n\n\n\n\ngkwreg: An R Package for Generalized Kumaraswamy Regression Models for Bounded Data\n\n\narticle\n\n\nThe Journal of Open Source Software\n\n\n2026\n\n\n0\n\n\n\n\nOptimalBinningWoE: Optimal Binning and Weight of Evidence Framework for Modeling\n\n\ndataset\n\n\nCRAN: Contributed Packages\n\n\n2026\n\n\n0\n\n\n\n\nbetaregscale: Beta Regression for Interval-Censored Scale-Derived Outcomes\n\n\ndataset\n\n\nCRAN: Contributed Packages\n\n\n2026\n\n\n0\n\n\n\n\nevandeilton/gkwreg: gkwreg 2.1.17\n\n\nsoftware\n\n\nZenodo (CERN European Organization for Nuclear Research)\n\n\n2026\n\n\n0\n\n\n\n\ngkwreg: Generalized Kumaraswamy Regression Models for Bounded Data\n\n\ndataset\n\n\nCRAN: Contributed Packages\n\n\n2025\n\n\n0\n\n\n\n\ngkwdist: Generalized Kumaraswamy Distribution Family\n\n\ndataset\n\n\nCRAN: Contributed Packages\n\n\n2025\n\n\n0\n\n\n\n\nModelos de regressão beta para dados de escala\n\n\ndissertation\n\n\nLA Referencia (Red Federada de Repositorios Institucionales de Publicaciones Científicas)\n\n\n2023\n\n\n0"
+  }
+]

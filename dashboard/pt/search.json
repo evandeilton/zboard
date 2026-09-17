@@ -1,0 +1,205 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Sobre",
+    "section": "",
+    "text": "Lendo em PortuguêsRead this page in English\nDado mais recente: 17 set 2026Página construída em 17 set 2026, 17:27 UTC. Todo gráfico abaixo é datado pelo seu dado, nunca por este build.\nO que este painel mede, de onde vêm os números, o que eles não sustentam e sob qual licença são publicados."
+  },
+  {
+    "objectID": "about.html#objetivo",
+    "href": "about.html#objetivo",
+    "title": "Sobre",
+    "section": "Objetivo",
+    "text": "Objetivo\nUm painel estático, atualizado diariamente e sem servidor, que consolida em um único lugar a saúde dos pacotes R publicados no CRAN, a sua série histórica de downloads, a atividade de desenvolvimento nos repositórios GitHub curados e a produção acadêmica associada. Serve a dois propósitos simultâneos: operacional, detectando uma regressão no CRAN antes da notificação oficial, e vitrine, como artefato público de portfólio."
+  },
+  {
+    "objectID": "about.html#metodologia",
+    "href": "about.html#metodologia",
+    "title": "Sobre",
+    "section": "Metodologia",
+    "text": "Metodologia\nUm job agendado coleta cada fonte de forma independente uma vez por dia, grava o resultado em um armazenamento colunar tipado e dele deriva o JSON que esta página lê. Uma fonte com falha degrada apenas a sua própria seção; o restante do painel continua publicando com o dado disponível. As escritas são idempotentes por chave natural, então reexecutar o pipeline no mesmo dia não duplica linhas. Apenas APIs e artefatos oficiais são usados: nenhum HTML é raspado.\nO conjunto de pacotes e repositórios é curado explicitamente em config/repos.yml. O que não está listado ali não é coletado, não é agregado e não é exibido: curadoria é decisão editorial, não filtro de exibição.\nA granularidade diária é retida por doze meses móveis; um rollup mensal é mantido permanentemente. O rollup é gravado antes de qualquer poda, e a poda é abortada se o rollup falhar, porque o tráfego de repositório é a única série que não pode ser reconstituída.\nApenas agregados por pacote e por repositório são publicados. Nenhum perfil de contribuidor, autor de issue ou endereço de e-mail é coletado.\n\nFontes de dados\n\n\n\n\n\nFonte\n\n\nEndpoint ou função\n\n\nAutenticação\n\n\nRetroativo\n\n\nLimite de uso\n\n\n\n\n\n\nDownloads do CRAN\n\n\ncranlogs::cran_downloads() → cranlogs.r-pkg.org\n\n\nnenhuma\n\n\nsim, desde 2012-10\n\n\ncortesia; no máximo 1 req/pacote/dia\n\n\n\n\nVersões e metadados\n\n\ncrandb.r-pkg.org/{pkg}/all\n\n\nnenhuma\n\n\nsim\n\n\ncortesia\n\n\n\n\nResultados de check\n\n\ntools::CRAN_check_results(), lendo o .rds oficial\n\n\nnenhuma\n\n\nnão\n\n\n1 req/dia\n\n\n\n\nStatus de arquivamento\n\n\ntools::CRAN_package_db() mais o índice Archive/\n\n\nnenhuma\n\n\nnão\n\n\n1 req/dia\n\n\n\n\nAtividade no GitHub\n\n\nGraphQL v4: repository{…}, contributionsCollection\n\n\npersonal access token fine-grained\n\n\nsim\n\n\n5.000 pontos/h\n\n\n\n\nTráfego no GitHub\n\n\nREST /repos/{owner}/{repo}/traffic/{views,clones}\n\n\ntoken com Administration: read\n\n\nnão — apenas 14 dias\n\n\n5.000 req/h\n\n\n\n\nProdução acadêmica\n\n\nOpenAlex api.openalex.org/works?filter=author.orcid:…\n\n\nendereço de e-mail, polite pool\n\n\nsim\n\n\ncerca de 100.000 req/dia"
+  },
+  {
+    "objectID": "about.html#limitations",
+    "href": "about.html#limitations",
+    "title": "Sobre",
+    "section": "Limitações declaradas",
+    "text": "Limitações declaradas\nTransparência metodológica é requisito, não cortesia. O texto abaixo é normativo e é publicado nos dois idiomas.\n\n1. Downloads não são censo.\nA série reflete exclusivamente o mirror cloud.r-project.org (Posit). Não há probabilidade de inclusão conhecida para os demais mirrors; portanto, não existe estimador não-enviesado do total de downloads. Use a série para tendência relativa, nunca como nível absoluto.\n\n\n2. Contaminação por automação.\nFarms de check do CRAN, imagens Docker e pipelines de CI de terceiros inflam a contagem. Em pacotes de nicho, a fração não-humana pode ser majoritária.\n\n\n3. Artefato de release.\nCada nova versão gera um salto de várias vezes a linha de base pela reconstrução de binários Windows/macOS. Os marcadores de release no gráfico existem para tornar esse artefato visível — não para corrigi-lo.\n\n\n4. Tráfego com início truncado.\nA série começa na data da primeira coleta; o período anterior é inacessível por design da API.\n\n\n5. Citações com defasagem.\nContagens do OpenAlex têm latência de indexação de semanas a meses e cobertura incompleta para software."
+  },
+  {
+    "objectID": "about.html#o-que-este-painel-deliberadamente-não-faz",
+    "href": "about.html#o-que-este-painel-deliberadamente-não-faz",
+    "title": "Sobre",
+    "section": "O que este painel deliberadamente não faz",
+    "text": "O que este painel deliberadamente não faz\nSem modelagem, previsão ou detecção de anomalia. O painel é descritivo. As séries de download do CRAN são amostra de conveniência de um único mirror, contaminada por CI e bots; modelá-las produziria inferência sem validade externa.\nSem ranking ou meta de contagem bruta de commits como indicador de destaque. A métrica está sujeita à lei de Goodhart: mede volume de digitação, não produção. Commits aparecem apenas como série secundária na página GitHub.\nSem coleta de dados identificáveis de terceiros. Perfis de contribuidores e e-mails de issues estão fora de escopo; apenas agregados por repositório são publicados."
+  },
+  {
+    "objectID": "about.html#licença",
+    "href": "about.html#licença",
+    "title": "Sobre",
+    "section": "Licença",
+    "text": "Licença\nO código é publicado sob a licença MIT. Os dados agregados publicados neste site estão disponíveis sob CC-BY-4.0. O dado de origem permanece sujeito aos termos do seu próprio provedor: CRAN, GitHub e OpenAlex."
+  },
+  {
+    "objectID": "about.html#código-fonte",
+    "href": "about.html#código-fonte",
+    "title": "Sobre",
+    "section": "Código-fonte",
+    "text": "Código-fonte\nOs coletores, o pipeline de consolidação e este site vivem em um único repositório open source.\n\nevandeilton/zboard no GitHub\nRelatar um problema neste painel\n\nCorreções, dúvidas sobre a metodologia e relatos de erro devem ir para o issue tracker do repositório, onde a discussão permanece pública e auditável."
+  },
+  {
+    "objectID": "about.html#este-build",
+    "href": "about.html#este-build",
+    "title": "Sobre",
+    "section": "Este build",
+    "text": "Este build\n\n\n\n\n\nCampo\n\n\nValor\n\n\n\n\n\n\nJSON gerado em\n\n\n17 set 2026, 17:27 UTC\n\n\n\n\nDado mais recente\n\n\n17 set 2026\n\n\n\n\nVersão do esquema de dados\n\n\n1\n\n\n\n\nVersão do pipeline\n\n\n0.0.0.9000\n\n\n\n\nRetenção diária, em meses\n\n\n12\n\n\n\n\n\n\n\n\nLinhas armazenadas por tabela\n\n\n\n\nTabela\n\n\nLinhas\n\n\nDado mais recente\n\n\n\n\n\n\ncran_downloads\n\n\n140\n\n\n16 set 2026\n\n\n\n\ncran_versions\n\n\n20\n\n\n31 ago 2026\n\n\n\n\ncran_checks\n\n\n52\n\n\n17 set 2026\n\n\n\n\ncran_status\n\n\n4\n\n\n17 set 2026\n\n\n\n\ngh_activity\n\n\n0\n\n\ndesconhecido\n\n\n\n\ngh_repo_snapshot\n\n\n0\n\n\ndesconhecido\n\n\n\n\ngh_traffic\n\n\n0\n\n\ndesconhecido\n\n\n\n\ngh_releases\n\n\n0\n\n\ndesconhecido\n\n\n\n\nacademic_works\n\n\n9\n\n\n17 set 2026\n\n\n\n\nrun_manifest\n\n\n10\n\n\n17 set 2026"
+  },
+  {
+    "objectID": "github.html",
+    "href": "github.html",
+    "title": "GitHub",
+    "section": "",
+    "text": "Lendo em PortuguêsRead this page in English\nDado mais recente: ainda indisponívelPágina construída em 17 set 2026, 17:27 UTC. Todo gráfico abaixo é datado pelo seu dado, nunca por este build.\nEstado de cada repositório curado, atividade de issues e pull requests, tráfego desde o início da coleta e commits como série secundária.\nⓘ Apenas agregados por repositório. Nenhum título de issue, autor ou endereço de e-mail é coletado ou publicado."
+  },
+  {
+    "objectID": "github.html#estado-dos-repositórios",
+    "href": "github.html#estado-dos-repositórios",
+    "title": "GitHub",
+    "section": "Estado dos repositórios",
+    "text": "Estado dos repositórios\n\nNenhum snapshot de repositório foi coletado ainda."
+  },
+  {
+    "objectID": "github.html#idade-da-issue-aberta-mais-antiga",
+    "href": "github.html#idade-da-issue-aberta-mais-antiga",
+    "title": "GitHub",
+    "section": "Idade da issue aberta mais antiga",
+    "text": "Idade da issue aberta mais antiga\nIdade, não contagem: uma issue aberta antiga é um sinal, um acúmulo de issues recentes normalmente não é.\n\nNenhum repositório tem issue aberta no momento."
+  },
+  {
+    "objectID": "github.html#atividade-de-issues-e-pull-requests",
+    "href": "github.html#atividade-de-issues-e-pull-requests",
+    "title": "GitHub",
+    "section": "Atividade de issues e pull requests",
+    "text": "Atividade de issues e pull requests\nContagens diárias por repositório. Pull requests mesclados e fechados são disjuntos: um pull request mesclado é contado apenas como mesclado.\n\nNenhuma atividade do GitHub foi coletada ainda."
+  },
+  {
+    "objectID": "github.html#tráfego",
+    "href": "github.html#tráfego",
+    "title": "GitHub",
+    "section": "Tráfego",
+    "text": "Tráfego\nVisualizações e clones por repositório. A API de tráfego do GitHub retém quatorze dias e nada mais, então esta série é a única cópia de longo prazo do dado e começa no dia em que a coleta foi iniciada.\n\nNenhum tráfego foi coletado ainda."
+  },
+  {
+    "objectID": "github.html#releases",
+    "href": "github.html#releases",
+    "title": "GitHub",
+    "section": "Releases",
+    "text": "Releases\nTabela permanente, da mais recente para a mais antiga.\n\nNenhuma release foi coletada ainda."
+  },
+  {
+    "objectID": "github.html#commits-série-secundária",
+    "href": "github.html#commits-série-secundária",
+    "title": "GitHub",
+    "section": "Commits, série secundária",
+    "text": "Commits, série secundária\nPublicado aqui e em nenhum outro lugar, deliberadamente. O volume bruto de commits está sujeito à lei de Goodhart: mede digitação, não produção. Aparece como uma série entre outras, nunca como número de destaque, e o painel não define meta nem acompanha sequência.\n\nNenhuma série de commits foi coletada ainda."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Visão geral",
+    "section": "",
+    "text": "Lendo em PortuguêsRead this page in English\nDado mais recente: 17 set 2026Página construída em 17 set 2026, 17:27 UTC. Todo gráfico abaixo é datado pelo seu dado, nunca por este build.\nEstado de cada pacote CRAN e repositório GitHub curado: pior status de check, amostra recente de downloads, issues abertas e a última release."
+  },
+  {
+    "objectID": "index.html#panorama",
+    "href": "index.html#panorama",
+    "title": "Visão geral",
+    "section": "Panorama",
+    "text": "Panorama\n\n\n\n4\n\n\nPacotes CRAN monitorados\n\n\n\n\n0\n\n\nRepositórios GitHub monitorados\n\n\n\n\n1.882\n\n\nDownloads, últimos 30 dias\n\n\ndownloads do mirror da Posit (amostra parcial). Por que isto é uma amostra parcial e não um total de downloads.\n\n\n\n\n0\n\n\nIssues abertas\n\n\n\n\n0\n\n\nPull requests abertos\n\n\n\n\n9\n\n\nTrabalhos acadêmicos\n\n\n\n\n0\n\n\nCitações indexadas pelo OpenAlex\n\n\nVer as limitações declaradas.\n\n\n\n\nⓘ Contagens de commits não aparecem em nenhum ponto desta página, por decisão de projeto. Volume bruto de commits mede digitação, não produção, e um destaque construído sobre ele convida à lei de Goodhart. Commits são publicados apenas como série secundária na página GitHub."
+  },
+  {
+    "objectID": "index.html#estado-dos-pacotes",
+    "href": "index.html#estado-dos-pacotes",
+    "title": "Visão geral",
+    "section": "Estado dos pacotes",
+    "text": "Estado dos pacotes\n\nⓘ Snapshot de 17 set 2026\n\n\n\n\n\nbetaregscale\n\n✓OK, status de check: check passou em todos os flavors\n\n\n0 de 13 flavors fora de OK\n\n\n\n\nVersão no CRAN\n\n\n2.7.4publicada em 23 ago 2026\n\n\n\n\nÚltimos 30 dias\n\n\n355Variação vs. os 30 dias anteriores: +1.379,2%\n\n\n\n\nIssues abertas\n\n\ndesconhecido\n\n\n\n\nPRs abertos\n\n\ndesconhecido\n\n\n\n\nEstrelas\n\n\ndesconhecido\n\n\n\n\nÚltima release\n\n\nnenhuma release registrada\n\n\n\n\nsem repositório curado\n\n\n\n\n\ngkwdist\n\n✓OK, status de check: check passou em todos os flavors\n\n\n0 de 13 flavors fora de OK\n\n\n\n\nVersão no CRAN\n\n\n1.1.5publicada em 23 ago 2026\n\n\n\n\nÚltimos 30 dias\n\n\n442Variação vs. os 30 dias anteriores: +978,0%\n\n\n\n\nIssues abertas\n\n\ndesconhecido\n\n\n\n\nPRs abertos\n\n\ndesconhecido\n\n\n\n\nEstrelas\n\n\ndesconhecido\n\n\n\n\nÚltima release\n\n\nnenhuma release registrada\n\n\n\n\nsem repositório curado\n\n\n\n\n\ngkwreg\n\n✓OK, status de check: check passou em todos os flavors\n\n\n0 de 13 flavors fora de OK\n\n\n\n\nVersão no CRAN\n\n\n2.1.18publicada em 24 ago 2026\n\n\n\n\nÚltimos 30 dias\n\n\n589Variação vs. os 30 dias anteriores: +1.491,9%\n\n\n\n\nIssues abertas\n\n\ndesconhecido\n\n\n\n\nPRs abertos\n\n\ndesconhecido\n\n\n\n\nEstrelas\n\n\ndesconhecido\n\n\n\n\nÚltima release\n\n\nnenhuma release registrada\n\n\n\n\nsem repositório curado\n\n\n\n\n\nOptimalBinningWoE\n\n✓OK, status de check: check passou em todos os flavors\n\n\n0 de 13 flavors fora de OK\n\n\n\n\nVersão no CRAN\n\n\n1.13.5publicada em 31 ago 2026\n\n\n\n\nÚltimos 30 dias\n\n\n496Variação vs. os 30 dias anteriores: +2.380,0%\n\n\n\n\nIssues abertas\n\n\ndesconhecido\n\n\n\n\nPRs abertos\n\n\ndesconhecido\n\n\n\n\nEstrelas\n\n\ndesconhecido\n\n\n\n\nÚltima release\n\n\nnenhuma release registrada\n\n\n\n\nsem repositório curado"
+  },
+  {
+    "objectID": "index.html#frescor-das-fontes",
+    "href": "index.html#frescor-das-fontes",
+    "title": "Visão geral",
+    "section": "Frescor das fontes",
+    "text": "Frescor das fontes\nÚltima execução registrada de cada coletor. Uma fonte defasada ou com falha degrada apenas a sua seção do painel, sem bloquear as demais.\n\n\n\n\n\nFonte\n\n\nStatus\n\n\nÚltima execução\n\n\nIdade\n\n\nLinhas gravadas\n\n\nMensagem\n\n\n\n\n\n\nacademic_works\n\n\n✓OK\n\n\n17 set 2026, 17:08 UTC\n\n\n0,3 h\n\n\n9\n\n\nnenhum\n\n\n\n\nconsolidate\n\n\n✓OK\n\n\n17 set 2026, 17:19 UTC\n\n\n0,1 h\n\n\n225\n\n\nnenhum\n\n\n\n\ncran_checks\n\n\n✓OK\n\n\n17 set 2026, 17:09 UTC\n\n\n0,3 h\n\n\n52\n\n\nnenhum\n\n\n\n\ncran_downloads\n\n\n✓OK\n\n\n17 set 2026, 17:09 UTC\n\n\n0,3 h\n\n\n140\n\n\nnenhum\n\n\n\n\ncran_status\n\n\n✓OK\n\n\n17 set 2026, 17:09 UTC\n\n\n0,3 h\n\n\n4\n\n\nnenhum\n\n\n\n\ncran_versions\n\n\n✓OK\n\n\n17 set 2026, 17:09 UTC\n\n\n0,3 h\n\n\n20\n\n\nnenhum\n\n\n\n\ngh_activity\n\n\n✕FALHOU\n\n\n17 set 2026, 17:09 UTC\n\n\n0,3 h\n\n\n0\n\n\nevandeilton/gkwreg: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/gkwdist: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/betaregscale: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/OptimalBinningWoE: GitHub API error (403): API rate …\n\n\n\n\ngh_releases\n\n\n✕FALHOU\n\n\n17 set 2026, 17:09 UTC\n\n\n0,3 h\n\n\n0\n\n\nevandeilton/gkwreg: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/gkwdist: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/betaregscale: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/OptimalBinningWoE: GitHub API error (403): API rate …\n\n\n\n\ngh_repo_snapshot\n\n\n✕FALHOU\n\n\n17 set 2026, 17:09 UTC\n\n\n0,3 h\n\n\n0\n\n\nevandeilton/gkwreg: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/gkwdist: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/betaregscale: GitHub API error (403): API rate limit exceeded for 172.212.157.194. (But here’s the good news: Authenticated request…; evandeilton/OptimalBinningWoE: GitHub API error (403): API rate …\n\n\n\n\ngh_traffic\n\n\n✕FALHOU\n\n\n17 set 2026, 17:09 UTC\n\n\n0,3 h\n\n\n0\n\n\nevandeilton/gkwreg: GitHub API error (401): Requires authentication ℹ Read more at &lt;https://docs.github.com/rest&gt;; evandeilton/gkwdist: GitHub API error (401): Requires authentication ℹ Read more at &lt;https://docs.github.com/rest&gt;; evandeilton/betaregscale: GitHub API error (401): Requires authentication ℹ Read more at &lt;https://docs.github.com/rest&gt;; evandeilton/OptimalBinningWoE: GitHub API error (401): Requires authentication ℹ Read more at &lt;https://docs.github.com/rest&gt;; evandeilton/rnp: Gi…"
+  },
+  {
+    "objectID": "cran.html",
+    "href": "cran.html",
+    "title": "CRAN",
+    "section": "",
+    "text": "Lendo em PortuguêsRead this page in English\nDado mais recente: 16 set 2026Página construída em 17 set 2026, 17:27 UTC. Todo gráfico abaixo é datado pelo seu dado, nunca por este build.\nStatus de check por pacote e flavor, a amostra diária de downloads com marcadores de release e o histórico completo de versões."
+  },
+  {
+    "objectID": "cran.html#estado-dos-pacotes",
+    "href": "cran.html#estado-dos-pacotes",
+    "title": "CRAN",
+    "section": "Estado dos pacotes",
+    "text": "Estado dos pacotes\n\n\n\nSnapshot de 17 set 2026\n\n\n\n\nPacote\n\n\nPior status\n\n\nFlavors verificados\n\n\nFlavors fora de OK\n\n\nNo CRAN\n\n\nArquivado\n\n\nMantenedor\n\n\n\n\n\n\nbetaregscale\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n13\n\n\n0\n\n\nsim\n\n\nnão\n\n\nJosé Evandeilton Lopes\n\n\n\n\ngkwdist\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n13\n\n\n0\n\n\nsim\n\n\nnão\n\n\nJosé Evandeilton Lopes\n\n\n\n\ngkwreg\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n13\n\n\n0\n\n\nsim\n\n\nnão\n\n\nJosé Evandeilton Lopes\n\n\n\n\nOptimalBinningWoE\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n13\n\n\n0\n\n\nsim\n\n\nnão\n\n\nJosé Evandeilton Lopes"
+  },
+  {
+    "objectID": "cran.html#status-de-check-por-pacote-e-flavor",
+    "href": "cran.html#status-de-check-por-pacote-e-flavor",
+    "title": "CRAN",
+    "section": "Status de check por pacote e flavor",
+    "text": "Status de check por pacote e flavor\nUma coluna por flavor de check do CRAN, apenas o snapshot mais recente. O status é dado por texto, nunca apenas por cor.\n\n\n\nSnapshot de 17 set 2026\n\n\n\n\nFlavor\n\n\nbetaregscale\n\n\ngkwdist\n\n\ngkwreg\n\n\nOptimalBinningWoE\n\n\n\n\n\n\nr-devel-linux-x86_64-debian-clang\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-devel-linux-x86_64-debian-gcc\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-devel-linux-x86_64-fedora-clang\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-devel-linux-x86_64-fedora-gcc\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-devel-windows-x86_64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-oldrel-macos-arm64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-oldrel-macos-x86_64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-oldrel-windows-x86_64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-patched-linux-x86_64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-release-linux-x86_64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-release-macos-arm64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-release-macos-x86_64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\nr-release-windows-x86_64\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n✓OK, status de check: check passou em todos os flavors\n\n\n\n\n\n\n\n\nTempo de check (s)\n\n\n\n\nPacote\n\n\nVersão\n\n\nTempo de check (s)\n\n\n\n\n\n\nbetaregscale\n\n\n2.7.4\n\n\n175,5\n\n\n\n\ngkwdist\n\n\n1.1.5\n\n\n129,4\n\n\n\n\ngkwreg\n\n\n2.1.18\n\n\n180,0\n\n\n\n\nOptimalBinningWoE\n\n\n1.13.5\n\n\n182,0"
+  },
+  {
+    "objectID": "cran.html#downloads-diários",
+    "href": "cran.html#downloads-diários",
+    "title": "CRAN",
+    "section": "Downloads diários",
+    "text": "Downloads diários\n\nⓘ downloads do mirror da Posit (amostra parcial). Por que isto é uma amostra parcial e não um total de downloads.\n\n\n\n\nDados do gráfico até 16 set 2026. Janela exportada: 17 set 2025 a 16 set 2026.\n\n\n\nⓘ As linhas verticais tracejadas marcam releases no CRAN. Cada uma é seguida por um salto de várias vezes a linha de base, produzido pela reconstrução de binários Windows e macOS. Os marcadores existem para tornar esse artefato visível, não para corrigi-lo.\n\n\n\n\nAmostra de downloads por pacote — downloads do mirror da Posit (amostra parcial)\n\n\n\n\nPacote\n\n\nDownloads\n\n\n\n\n\n\nbetaregscale\n\n\n379\n\n\n\n\ngkwdist\n\n\n483\n\n\n\n\ngkwreg\n\n\n626\n\n\n\n\nOptimalBinningWoE\n\n\n516"
+  },
+  {
+    "objectID": "cran.html#arquivo-mensal-permanente",
+    "href": "cran.html#arquivo-mensal-permanente",
+    "title": "CRAN",
+    "section": "Arquivo mensal permanente",
+    "text": "Arquivo mensal permanente\nRollup mensal, mantido indefinidamente. A série diária acima é podada para uma janela móvel de 12 meses.\n\nⓘ downloads do mirror da Posit (amostra parcial). Por que isto é uma amostra parcial e não um total de downloads.\n\n\n\n\nDados do gráfico até 1 set 2026.\n\n\n\n\n\nArquivo mensal permanente — downloads do mirror da Posit (amostra parcial)\n\n\n\n\nMês\n\n\nPacote\n\n\nDownloads\n\n\n\n\n\n\nago 2026\n\n\nbetaregscale\n\n\n213\n\n\n\n\nago 2026\n\n\ngkwdist\n\n\n295\n\n\n\n\nago 2026\n\n\ngkwreg\n\n\n442\n\n\n\n\nago 2026\n\n\nOptimalBinningWoE\n\n\n267\n\n\n\n\nset 2026\n\n\nbetaregscale\n\n\n166\n\n\n\n\nset 2026\n\n\ngkwdist\n\n\n188\n\n\n\n\nset 2026\n\n\ngkwreg\n\n\n184\n\n\n\n\nset 2026\n\n\nOptimalBinningWoE\n\n\n249"
+  },
+  {
+    "objectID": "cran.html#histórico-de-versões",
+    "href": "cran.html#histórico-de-versões",
+    "title": "CRAN",
+    "section": "Histórico de versões",
+    "text": "Histórico de versões\nTabela permanente: todas as versões publicadas no CRAN, da mais recente para a mais antiga.\n\n\n\n\n\nPacote\n\n\nVersão\n\n\nData de publicação\n\n\nVigente\n\n\n\n\n\n\nOptimalBinningWoE\n\n\n1.13.5\n\n\n31 ago 2026\n\n\nsim\n\n\n\n\nOptimalBinningWoE\n\n\n1.13.4\n\n\n26 ago 2026\n\n\nnão\n\n\n\n\nOptimalBinningWoE\n\n\n1.13.3\n\n\n23 ago 2026\n\n\nnão\n\n\n\n\nOptimalBinningWoE\n\n\n1.0.8\n\n\n29 jan 2026\n\n\nnão\n\n\n\n\nOptimalBinningWoE\n\n\n1.0.3\n\n\n23 jan 2026\n\n\nnão\n\n\n\n\nbetaregscale\n\n\n2.7.4\n\n\n23 ago 2026\n\n\nsim\n\n\n\n\nbetaregscale\n\n\n2.6.9\n\n\n25 fev 2026\n\n\nnão\n\n\n\n\ngkwdist\n\n\n1.1.5\n\n\n23 ago 2026\n\n\nsim\n\n\n\n\ngkwdist\n\n\n1.1.4\n\n\n28 mai 2026\n\n\nnão\n\n\n\n\ngkwdist\n\n\n1.1.3\n\n\n21 mai 2026\n\n\nnão\n\n\n\n\ngkwdist\n\n\n1.1.2\n\n\n8 jan 2026\n\n\nnão\n\n\n\n\ngkwdist\n\n\n1.1.1\n\n\n27 nov 2025\n\n\nnão\n\n\n\n\ngkwdist\n\n\n1.0.10\n\n\n13 nov 2025\n\n\nnão\n\n\n\n\ngkwreg\n\n\n2.1.18\n\n\n24 ago 2026\n\n\nsim\n\n\n\n\ngkwreg\n\n\n2.1.14\n\n\n9 jan 2026\n\n\nnão\n\n\n\n\ngkwreg\n\n\n2.1.6\n\n\n27 nov 2025\n\n\nnão\n\n\n\n\ngkwreg\n\n\n2.1.1\n\n\n15 nov 2025\n\n\nnão\n\n\n\n\ngkwreg\n\n\n1.0.10\n\n\n9 jul 2025\n\n\nnão\n\n\n\n\ngkwreg\n\n\n1.0.7\n\n\n1 mai 2025\n\n\nnão\n\n\n\n\ngkwreg\n\n\n1.0.3\n\n\n15 abr 2025\n\n\nnão"
+  },
+  {
+    "objectID": "academic.html",
+    "href": "academic.html",
+    "title": "Acadêmico",
+    "section": "",
+    "text": "Lendo em PortuguêsRead this page in English\nDado mais recente: 17 set 2026Página construída em 17 set 2026, 17:27 UTC. Todo gráfico abaixo é datado pelo seu dado, nunca por este build.\nPublicações, software e preprints atribuídos ao ORCID iD configurado, com contagens de citação conforme indexadas pelo OpenAlex.\nⓘ As contagens de citação têm defasagem de indexação de semanas a meses e a cobertura do OpenAlex para software de pesquisa é incompleta. Trate todo número desta página como um limite inferior."
+  },
+  {
+    "objectID": "academic.html#trabalhos-e-citações-por-ano",
+    "href": "academic.html#trabalhos-e-citações-por-ano",
+    "title": "Acadêmico",
+    "section": "Trabalhos e citações por ano",
+    "text": "Trabalhos e citações por ano\n\n\n\nDados do gráfico até 17 set 2026.\n\n\n\n\n\n\n\nAno\n\n\nTrabalhos\n\n\nCitações\n\n\n\n\n\n\n2023\n\n\n1\n\n\n0\n\n\n\n\n2025\n\n\n2\n\n\n0\n\n\n\n\n2026\n\n\n6\n\n\n0"
+  },
+  {
+    "objectID": "academic.html#trabalhos-e-citações-por-tipo",
+    "href": "academic.html#trabalhos-e-citações-por-tipo",
+    "title": "Acadêmico",
+    "section": "Trabalhos e citações por tipo",
+    "text": "Trabalhos e citações por tipo\n\n\n\n\n\nTipo\n\n\nTrabalhos\n\n\nCitações\n\n\n\n\n\n\narticle\n\n\n1\n\n\n0\n\n\n\n\ndataset\n\n\n4\n\n\n0\n\n\n\n\ndissertation\n\n\n1\n\n\n0\n\n\n\n\nsoftware\n\n\n3\n\n\n0\n\n\n\n\n\n\nⓘ O tipo é o vocabulário do próprio OpenAlex, repassado sem alteração."
+  },
+  {
+    "objectID": "academic.html#trabalhos",
+    "href": "academic.html#trabalhos",
+    "title": "Acadêmico",
+    "section": "Trabalhos",
+    "text": "Trabalhos\n\n\n\nSnapshot de 17 set 2026\n\n\n\n\nTítulo\n\n\nTipo\n\n\nVeículo\n\n\nAno\n\n\nCitações\n\n\n\n\n\n\nevandeilton/gkwreg: gkwreg 2.1.17\n\n\nsoftware\n\n\nZenodo (CERN European Organization for Nuclear Research)\n\n\n2026\n\n\n0\n\n\n\n\ngkwreg: An R Package for Generalized Kumaraswamy Regression Models for Bounded Data\n\n\nsoftware\n\n\nZenodo (CERN European Organization for Nuclear Research)\n\n\n2026\n\n\n0\n\n\n\n\ngkwreg: An R Package for Generalized Kumaraswamy Regression Models for Bounded Data\n\n\narticle\n\n\nThe Journal of Open Source Software\n\n\n2026\n\n\n0\n\n\n\n\nOptimalBinningWoE: Optimal Binning and Weight of Evidence Framework for Modeling\n\n\ndataset\n\n\nCRAN: Contributed Packages\n\n\n2026\n\n\n0\n\n\n\n\nbetaregscale: Beta Regression for Interval-Censored Scale-Derived Outcomes\n\n\ndataset\n\n\nCRAN: Contributed Packages\n\n\n2026\n\n\n0\n\n\n\n\nevandeilton/gkwreg: gkwreg 2.1.17\n\n\nsoftware\n\n\nZenodo (CERN European Organization for Nuclear Research)\n\n\n2026\n\n\n0\n\n\n\n\ngkwreg: Generalized Kumaraswamy Regression Models for Bounded Data\n\n\ndataset\n\n\nCRAN: Contributed Packages\n\n\n2025\n\n\n0\n\n\n\n\ngkwdist: Generalized Kumaraswamy Distribution Family\n\n\ndataset\n\n\nCRAN: Contributed Packages\n\n\n2025\n\n\n0\n\n\n\n\nModelos de regressão beta para dados de escala\n\n\ndissertation\n\n\nLA Referencia (Red Federada de Repositorios Institucionales de Publicaciones Científicas)\n\n\n2023\n\n\n0"
+  }
+]
